@@ -544,6 +544,40 @@
         }
       }
     },
+    "organizationTse": {
+      "title": "TSE",
+      "description": "Technische Sicherheitseinrichtung (KassenSichV) — signiert jede Zahlung fiskalkonform.",
+      "enabled": "TSE aktiviert",
+      "provider": "Anbieter",
+      "providerFiskaly": "fiskaly (Cloud)",
+      "providerLocal": "Lokale Hardware (USB/SD, z.B. Swissbit)",
+      "fiskalyDescription": "Zugangsdaten für die fiskaly Cloud-TSE.",
+      "apiKey": "API-Key",
+      "apiKeyPlaceholder": "fiskaly API-Key",
+      "apiSecret": "API-Secret",
+      "apiSecretPlaceholder": "fiskaly API-Secret",
+      "tssId": "TSS-ID",
+      "tssIdPlaceholder": "Technical Security System ID",
+      "localDescription": "Signierung erfolgt lokal über den Drucker-Agenten, an dem der TSE-Stick angeschlossen ist — keine Internetverbindung zum Signieren nötig.",
+      "agentDeviceId": "Agent-Geräte-ID",
+      "agentDeviceIdPlaceholder": "Geräte-ID des Drucker-Agenten mit TSE-Stick",
+      "testConnection": "Verbindung testen",
+      "testSuccess": "Verbindung erfolgreich",
+      "testFailed": "Verbindungstest fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.",
+      "saveFailed": "Speichern fehlgeschlagen",
+      "success": "TSE-Einstellungen gespeichert",
+      "export": {
+        "title": "Datenexport (Übergabe)",
+        "description": "Signierte Transaktionen für einen Zeitraum exportieren — für die eigene Aufbewahrungspflicht bei gemieteter Hardware.",
+        "notConfigured": "TSE ist nicht konfiguriert.",
+        "client": "Client",
+        "clientOrgWide": "Organisationsweit (Online-Bestellungen)",
+        "periodStart": "Von",
+        "periodEnd": "Bis",
+        "download": "Export herunterladen",
+        "failed": "Export fehlgeschlagen"
+      }
+    },
     "organizationNotifications": {
       "title": "Benachrichtigungen",
       "description": "E-Mail-Benachrichtigungen für Ihre Organisation",
