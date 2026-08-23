@@ -1731,6 +1731,32 @@ export const tseApi = {
     apiClient.post<ApiResponse<{ ok: boolean; message?: string }>>(
       `/organizations/${organizationId}/tse/test-connection`
     ),
+
+  /** All TSE client ids this org has signed under (org-wide + one per till). */
+  listClients: (organizationId: string) =>
+    apiClient.get<ApiResponse<string[]>>(`/organizations/${organizationId}/tse/clients`),
+
+  /** Handover export for the weekend-rental model — fetched with the user's
+   *  JWT attached and resolved to a Blob ready for object-URL download. */
+  exportData: async (
+    organizationId: string,
+    periodStart: string,
+    periodEnd: string,
+    clientId?: string
+  ): Promise<Blob> => {
+    const params = new URLSearchParams({ periodStart, periodEnd });
+    if (clientId) params.set('clientId', clientId);
+    const url = `${API_URL}/organizations/${organizationId}/tse/export?${params.toString()}`;
+    const token = apiClient.getAccessToken();
+    const res = await fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      throw new Error(`TSE-Export fehlgeschlagen (${res.status})`);
+    }
+    return res.blob();
+  },
 };
 
 // Setup API (Initial setup, no auth required)

@@ -548,6 +548,9 @@
       "title": "TSE",
       "description": "Technical security device (KassenSichV, German fiscalization law) — signs every payment for compliance.",
       "enabled": "TSE enabled",
+      "provider": "Provider",
+      "providerFiskaly": "fiskaly (Cloud)",
+      "providerLocal": "Local hardware (USB/SD, e.g. Swissbit)",
       "fiskalyDescription": "Credentials for the fiskaly cloud TSE.",
       "apiKey": "API key",
       "apiKeyPlaceholder": "fiskaly API key",
@@ -555,11 +558,25 @@
       "apiSecretPlaceholder": "fiskaly API secret",
       "tssId": "TSS ID",
       "tssIdPlaceholder": "Technical Security System ID",
+      "localDescription": "Signing happens locally on the printer-agent that has the TSE stick attached — no internet connection needed to sign.",
+      "agentDeviceId": "Agent device ID",
+      "agentDeviceIdPlaceholder": "Device ID of the printer-agent with the TSE stick",
       "testConnection": "Test connection",
       "testSuccess": "Connection successful",
       "testFailed": "Connection test failed. Please check your credentials.",
       "saveFailed": "Failed to save",
-      "success": "TSE settings saved"
+      "success": "TSE settings saved",
+      "export": {
+        "title": "Data export (handover)",
+        "description": "Export signed transactions for a date range — for your own record-keeping obligation on rented hardware.",
+        "notConfigured": "TSE is not configured.",
+        "client": "Client",
+        "clientOrgWide": "Organization-wide (online orders)",
+        "periodStart": "From",
+        "periodEnd": "To",
+        "download": "Download export",
+        "failed": "Export failed"
+      }
     },
     "organizationNotifications": {
       "title": "Notifications",
