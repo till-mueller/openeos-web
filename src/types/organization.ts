@@ -44,6 +44,15 @@ export interface OrganizationSettings {
     affiliateKey?: string;
     appId?: string;
   };
+  tse?: {
+    enabled: boolean;
+    provider: 'fiskaly' | 'none';
+    fiskaly?: {
+      apiKey: string;
+      apiSecret: string;
+      tssId: string;
+    };
+  };
   orderFlow?: {
     receiptPrinting?: {
       enabled: boolean;

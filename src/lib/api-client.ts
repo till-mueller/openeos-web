@@ -1725,6 +1725,14 @@ export const sumupApi = {
     ),
 };
 
+// TSE (Technische Sicherheitseinrichtung / KassenSichV fiscalization) API
+export const tseApi = {
+  testConnection: (organizationId: string) =>
+    apiClient.post<ApiResponse<{ ok: boolean; message?: string }>>(
+      `/organizations/${organizationId}/tse/test-connection`
+    ),
+};
+
 // Setup API (Initial setup, no auth required)
 export const setupApi = {
   // Check if setup is required

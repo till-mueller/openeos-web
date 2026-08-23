@@ -544,6 +544,23 @@
         }
       }
     },
+    "organizationTse": {
+      "title": "TSE",
+      "description": "Technical security device (KassenSichV, German fiscalization law) — signs every payment for compliance.",
+      "enabled": "TSE enabled",
+      "fiskalyDescription": "Credentials for the fiskaly cloud TSE.",
+      "apiKey": "API key",
+      "apiKeyPlaceholder": "fiskaly API key",
+      "apiSecret": "API secret",
+      "apiSecretPlaceholder": "fiskaly API secret",
+      "tssId": "TSS ID",
+      "tssIdPlaceholder": "Technical Security System ID",
+      "testConnection": "Test connection",
+      "testSuccess": "Connection successful",
+      "testFailed": "Connection test failed. Please check your credentials.",
+      "saveFailed": "Failed to save",
+      "success": "TSE settings saved"
+    },
     "organizationNotifications": {
       "title": "Notifications",
       "description": "Email notifications for your organization",

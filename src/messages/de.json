@@ -544,6 +544,23 @@
         }
       }
     },
+    "organizationTse": {
+      "title": "TSE",
+      "description": "Technische Sicherheitseinrichtung (KassenSichV) — signiert jede Zahlung fiskalkonform.",
+      "enabled": "TSE aktiviert",
+      "fiskalyDescription": "Zugangsdaten für die fiskaly Cloud-TSE.",
+      "apiKey": "API-Key",
+      "apiKeyPlaceholder": "fiskaly API-Key",
+      "apiSecret": "API-Secret",
+      "apiSecretPlaceholder": "fiskaly API-Secret",
+      "tssId": "TSS-ID",
+      "tssIdPlaceholder": "Technical Security System ID",
+      "testConnection": "Verbindung testen",
+      "testSuccess": "Verbindung erfolgreich",
+      "testFailed": "Verbindungstest fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.",
+      "saveFailed": "Speichern fehlgeschlagen",
+      "success": "TSE-Einstellungen gespeichert"
+    },
     "organizationNotifications": {
       "title": "Benachrichtigungen",
       "description": "E-Mail-Benachrichtigungen für Ihre Organisation",
