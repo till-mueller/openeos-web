@@ -824,6 +824,23 @@ export const adminApi = {
   updateOrganization: (id: string, data: Partial<import('@/types/organization').Organization>) =>
     apiClient.patch<ApiResponse<import('@/types/organization').Organization>>(`/admin/organizations/${id}`, data),
 
+  importCustomers: async (files: File[]) => {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+    const response = await fetch(`${API_URL}/admin/organizations/import`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiClient.getAccessToken()}`,
+      },
+      body: formData,
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => null);
+      throw new Error(body?.message || 'Import failed');
+    }
+    return response.json() as Promise<ApiResponse<import('@/types/admin').CustomerImportResult[]>>;
+  },
+
   // Stats
   getOverviewStats: () =>
     apiClient.get<ApiResponse<import('@/types/admin').AdminOverviewStats>>('/admin/stats/overview'),

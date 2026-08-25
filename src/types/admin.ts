@@ -95,3 +95,11 @@ export interface AdminAuditLog {
   adminUser?: { id: string; firstName: string; lastName: string; email: string };
   organization?: { id: string; name: string } | null;
 }
+
+export interface CustomerImportResult {
+  filename: string;
+  action: 'created' | 'updated' | 'error';
+  organizationId?: string;
+  organizationSlug?: string;
+  error?: string;
+}

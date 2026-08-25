@@ -1425,6 +1425,24 @@
     "title": "Organizations",
     "subtitle": "Manage your organizations and their settings",
     "create": "Create Organization",
+    "import": {
+      "button": "Import customers",
+      "title": "Import customers from YAML",
+      "description": "Upload one or more YAML files to create organizations with an admin account each. Re-uploading the same file updates the organization it previously created.",
+      "filesLabel": "YAML files",
+      "submit": "Import",
+      "failed": "Import failed",
+      "summarySuccess": "{created} created, {updated} updated",
+      "summaryPartial": "{created} created, {updated} updated, {failed} failed",
+      "table": {
+        "file": "File",
+        "result": "Result",
+        "action": {
+          "created": "Created",
+          "updated": "Updated"
+        }
+      }
+    },
     "empty": {
       "title": "No Organizations",
       "description": "Create your first organization to get started."
