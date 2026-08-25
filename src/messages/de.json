@@ -1203,6 +1203,24 @@
     "title": "Organisationen",
     "subtitle": "Verwalten Sie Ihre Organisationen und deren Einstellungen",
     "create": "Organisation erstellen",
+    "import": {
+      "button": "Kunden importieren",
+      "title": "Kunden aus YAML importieren",
+      "description": "Laden Sie eine oder mehrere YAML-Dateien hoch, um Organisationen samt Admin-Zugang anzulegen. Ein erneuter Upload derselben Datei aktualisiert die zuvor erstellte Organisation.",
+      "filesLabel": "YAML-Dateien",
+      "submit": "Importieren",
+      "failed": "Import fehlgeschlagen",
+      "summarySuccess": "{created} erstellt, {updated} aktualisiert",
+      "summaryPartial": "{created} erstellt, {updated} aktualisiert, {failed} fehlgeschlagen",
+      "table": {
+        "file": "Datei",
+        "result": "Ergebnis",
+        "action": {
+          "created": "Erstellt",
+          "updated": "Aktualisiert"
+        }
+      }
+    },
     "empty": {
       "title": "Keine Organisationen",
       "description": "Erstellen Sie Ihre erste Organisation, um loszulegen."
