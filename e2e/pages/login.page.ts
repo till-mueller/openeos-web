@@ -11,6 +11,7 @@ export class LoginPage {
   readonly errorMessage: Locator;
   readonly forgotPasswordLink: Locator;
   readonly registerLink: Locator;
+  readonly ssoButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -20,6 +21,7 @@ export class LoginPage {
     this.errorMessage = page.locator('[role="alert"]');
     this.forgotPasswordLink = page.getByRole('link', { name: /passwort vergessen/i });
     this.registerLink = page.getByRole('link', { name: /registrieren/i });
+    this.ssoButton = page.getByRole('link', { name: /anmelden mit/i });
   }
 
   async goto(locale: string = 'de') {

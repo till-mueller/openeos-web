@@ -1,7 +1,7 @@
 import { ApiException, type ApiError, type ApiResponse } from '@/types/api';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-const API_URL = `${API_BASE}/api`;
+export const API_URL = `${API_BASE}/api`;
 // Device token stays in localStorage: it identifies a paired, already-trusted
 // physical device (kiosk/POS terminal), not a user session, mirroring how
 // the printer-agent and TV apps hold their own device tokens on disk. The
@@ -293,6 +293,11 @@ export const authApi = {
     }),
 
   me: () => apiClient.get<ApiResponse<{ user: import('@/types/auth').User }>>('/auth/me'),
+
+  ssoStatus: () =>
+    apiClient.get<ApiResponse<{ enabled: boolean; provider: string }>>('/auth/sso/status', {
+      skipAuth: true,
+    }),
 
   myInvitations: () =>
     apiClient.get<ApiResponse<import('@/types/auth').PendingInvitation[]>>('/auth/me/invitations'),
