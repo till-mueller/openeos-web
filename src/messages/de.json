@@ -41,6 +41,9 @@
       "deviceMode": "Als Gerät verwenden (Kassen-Terminal)",
       "resendVerification": "E-Mail erneut senden",
       "resendVerificationSent": "Bestätigungs-E-Mail wurde erneut gesendet.",
+      "orDivider": "oder",
+      "ssoButton": "Anmelden mit {provider}",
+      "ssoRedirecting": "Anmeldung wird abgeschlossen …",
       "highlights": {
         "head": "Admin-Interface",
         "mobile": "Mobile Kasse",
@@ -58,7 +61,8 @@
         "emailRequired": "E-Mail ist erforderlich",
         "passwordRequired": "Passwort ist erforderlich",
         "invalidEmail": "Ungültige E-Mail-Adresse",
-        "emailNotVerified": "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse."
+        "emailNotVerified": "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse.",
+        "ssoFailed": "SSO-Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut."
       }
     },
     "register": {

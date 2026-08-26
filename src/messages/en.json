@@ -41,6 +41,9 @@
       "deviceMode": "Use as device (POS terminal)",
       "resendVerification": "Resend email",
       "resendVerificationSent": "Confirmation email has been resent.",
+      "orDivider": "or",
+      "ssoButton": "Sign in with {provider}",
+      "ssoRedirecting": "Finishing sign-in …",
       "highlights": {
         "head": "Admin interface",
         "mobile": "Mobile POS",
@@ -58,7 +61,8 @@
         "emailRequired": "Email is required",
         "passwordRequired": "Password is required",
         "invalidEmail": "Invalid email address",
-        "emailNotVerified": "Please verify your email address first."
+        "emailNotVerified": "Please verify your email address first.",
+        "ssoFailed": "SSO sign-in failed. Please try again."
       }
     },
     "register": {
