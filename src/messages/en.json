@@ -63,6 +63,34 @@
         "invalidEmail": "Invalid email address",
         "emailNotVerified": "Please verify your email address first.",
         "ssoFailed": "SSO sign-in failed. Please try again."
+      },
+      "comic": {
+        "badge": "Admin",
+        "headline": "Run your whole",
+        "headlineAccent": "festival tent.",
+        "status": "All systems normal",
+        "panels": {
+          "checkout": {
+            "step": "Step 1 · Checkout",
+            "copy": "Orders are taken right at the counter — on any tablet, even without a connection."
+          },
+          "receipt": {
+            "step": "Step 2 · Receipt",
+            "copy": "Kitchen and bar tickets print automatically on the right printer."
+          },
+          "runner": {
+            "step": "Step 3 · Service",
+            "copy": "Who carries what where is on the ticket. No shouting, no scraps of paper."
+          },
+          "kitchen": {
+            "step": "Step 4 · Kitchen",
+            "copy": "The kitchen display clears finished orders with a single tap."
+          },
+          "tent": {
+            "step": "Step 5 · Overview",
+            "copy": "Revenue, bestsellers and waiting times come together live in the dashboard."
+          }
+        }
       }
     },
     "register": {
@@ -313,6 +341,20 @@
         "status": "Status",
         "low": "Low",
         "ok": "OK"
+      },
+      "systemStatus": {
+        "label": "System status",
+        "pos": "Tills",
+        "printers": "Printers",
+        "printQueue": "Queue",
+        "openOrders": "Open orders",
+        "noneConfigured": "none set up",
+        "jobs": "{count, plural, =0 {no tickets} one {# ticket} other {# tickets}}",
+        "throughput": "{count} in the past hour",
+        "openOrdersHint": "not yet completed",
+        "unreachable": "unreachable",
+        "partiallyReachable": "partly reachable",
+        "allConnected": "all connected"
       }
     }
   },

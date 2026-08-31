@@ -63,6 +63,34 @@
         "invalidEmail": "Ungültige E-Mail-Adresse",
         "emailNotVerified": "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse.",
         "ssoFailed": "SSO-Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut."
+      },
+      "comic": {
+        "badge": "Admin",
+        "headline": "Verwalte dein",
+        "headlineAccent": "ganzes Festzelt.",
+        "status": "Alle Systeme normal",
+        "panels": {
+          "checkout": {
+            "step": "Schritt 1 · Kasse",
+            "copy": "Die Bestellung wird an der Theke aufgenommen — auf jedem Tablet, auch ohne Netz."
+          },
+          "receipt": {
+            "step": "Schritt 2 · Bon",
+            "copy": "Küchen- und Thekenbons laufen automatisch auf dem richtigen Drucker aus."
+          },
+          "runner": {
+            "step": "Schritt 3 · Ausgabe",
+            "copy": "Wer was wohin bringt, steht auf dem Bon. Keine Zurufe, keine Zettelwirtschaft."
+          },
+          "kitchen": {
+            "step": "Schritt 4 · Küche",
+            "copy": "Das Küchendisplay quittiert fertige Bestellungen mit einem Griff."
+          },
+          "tent": {
+            "step": "Schritt 5 · Überblick",
+            "copy": "Umsatz, Bestseller und Wartezeiten laufen live im Dashboard zusammen."
+          }
+        }
       }
     },
     "register": {
@@ -313,6 +341,20 @@
         "status": "Status",
         "low": "Niedrig",
         "ok": "OK"
+      },
+      "systemStatus": {
+        "label": "Systemstatus",
+        "pos": "Kassen",
+        "printers": "Drucker",
+        "printQueue": "Warteschlange",
+        "openOrders": "Offene Bestellungen",
+        "noneConfigured": "keine eingerichtet",
+        "jobs": "{count, plural, =0 {keine Bons} one {# Bon} other {# Bons}}",
+        "throughput": "{count} in der letzten Stunde",
+        "openOrdersHint": "noch nicht abgeschlossen",
+        "unreachable": "nicht erreichbar",
+        "partiallyReachable": "teilweise erreichbar",
+        "allConnected": "alle verbunden"
       }
     }
   },
