@@ -46,6 +46,19 @@ export interface OrganizationSettings {
     affiliateKey?: string;
     appId?: string;
   };
+  tse?: {
+    enabled: boolean;
+    provider: 'fiskaly' | 'local' | 'none';
+    fiskaly?: {
+      apiKey: string;
+      apiSecret: string;
+      tssId: string;
+    };
+    /** Local/offline hardware TSE (e.g. Swissbit) attached to an on-prem printer-agent. */
+    local?: {
+      agentDeviceId: string;
+    };
+  };
   orderFlow?: {
     receiptPrinting?: {
       enabled: boolean;

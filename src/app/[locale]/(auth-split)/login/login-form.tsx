@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowRight, Tablet02 } from '@untitledui/icons';
 
 import { Link } from '@/i18n/routing';
-import { apiClient, authApi } from '@/lib/api-client';
+import { API_URL, apiClient, authApi } from '@/lib/api-client';
 import { useAuthStore } from '@/stores/auth-store';
 import { ApiException } from '@/types/api';
 import { isTwoFactorRequired } from '@/types/auth';
@@ -22,6 +22,7 @@ export function LoginForm() {
   const [remember, setRemember] = useState(false);
   const [emailNotVerified, setEmailNotVerified] = useState(false);
   const [resendStatus, setResendStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
+  const [sso, setSso] = useState<{ enabled: boolean; provider: string } | null>(null);
 
   const {
     setUser,
@@ -36,6 +37,19 @@ export function LoginForm() {
   useEffect(() => {
     if (prefillEmail) setEmail(prefillEmail);
   }, [prefillEmail]);
+
+  useEffect(() => {
+    authApi
+      .ssoStatus()
+      .then((res) => setSso(res.data))
+      .catch(() => setSso({ enabled: false, provider: '' }));
+  }, []);
+
+  useEffect(() => {
+    if (searchParams.get('error') === 'sso_failed') {
+      setError(t('errors.ssoFailed'));
+    }
+  }, [searchParams, t]);
 
   useEffect(() => {
     if (!isAuthLoading && isAuthenticated) {
@@ -177,6 +191,20 @@ export function LoginForm() {
           <ArrowRight />
         </button>
       </form>
+
+      {sso?.enabled && (
+        <>
+          <div className="auth-form__divider">
+            <span>{t('orDivider')}</span>
+          </div>
+          <a
+            href={`${API_URL}/auth/sso/authentik?redirect=${encodeURIComponent(redirectUrl)}`}
+            className="btn btn--ghost btn--block btn--lg"
+          >
+            {t('ssoButton', { provider: sso.provider })}
+          </a>
+        </>
+      )}
 
       <p className="auth-form__alt">
         {t('noAccount')}{' '}

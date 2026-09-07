@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useDeleteOrganization } from '@/hooks/use-organizations';
 import type { Organization } from '@/types';
 
+import { ImportCustomersModal } from './import-customers-modal';
 import { MembersModal } from './members-modal';
 import { OrganizationFormModal } from './organization-form-modal';
 import { OrganizationsList } from './organizations-list';
@@ -14,6 +15,7 @@ export function OrganizationsContainer() {
   const t = useTranslations('organizations');
   const tCommon = useTranslations('common');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
   const [deletingOrganization, setDeletingOrganization] = useState<Organization | null>(null);
   const [membersOrganization, setMembersOrganization] = useState<Organization | null>(null);
@@ -21,6 +23,7 @@ export function OrganizationsContainer() {
   const deleteOrganization = useDeleteOrganization();
 
   const handleCreateClick = () => setIsCreateModalOpen(true);
+  const handleImportClick = () => setIsImportModalOpen(true);
   const handleEditClick = (organization: Organization) => setEditingOrganization(organization);
   const handleDeleteClick = (organization: Organization) => setDeletingOrganization(organization);
   const handleManageMembersClick = (organization: Organization) => setMembersOrganization(organization);
@@ -44,6 +47,7 @@ export function OrganizationsContainer() {
     <>
       <OrganizationsList
         onCreateClick={handleCreateClick}
+        onImportClick={handleImportClick}
         onEditClick={handleEditClick}
         onDeleteClick={handleDeleteClick}
         onManageMembersClick={handleManageMembersClick}
@@ -53,6 +57,11 @@ export function OrganizationsContainer() {
         isOpen={isCreateModalOpen || !!editingOrganization}
         organization={editingOrganization}
         onClose={handleModalClose}
+      />
+
+      <ImportCustomersModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
       />
 
       <MembersModal

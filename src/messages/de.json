@@ -41,13 +41,28 @@
       "deviceMode": "Als Gerät verwenden (Kassen-Terminal)",
       "resendVerification": "E-Mail erneut senden",
       "resendVerificationSent": "Bestätigungs-E-Mail wurde erneut gesendet.",
+      "orDivider": "oder",
+      "ssoButton": "Anmelden mit {provider}",
+      "ssoRedirecting": "Anmeldung wird abgeschlossen …",
+      "highlights": {
+        "head": "Admin-Interface",
+        "mobile": "Mobile Kasse",
+        "mobileCopy": "Bedienung über Smartphone oder Tablet — überall auf dem Gelände.",
+        "qrOrder": "Online-Bestellung",
+        "qrOrderCopy": "Gäste bestellen per QR-Code selbst — weniger Wartezeit, mehr Umsatz.",
+        "shifts": "Schichtplan",
+        "shiftsCopy": "Schichten planen, Mitarbeiter melden sich online an — alles automatisch.",
+        "stats": "Echtzeit-Statistiken",
+        "statsCopy": "Umsatz, Bestseller, Wartezeiten — immer den Überblick behalten."
+      },
       "errors": {
         "invalidCredentials": "Ungültige E-Mail oder Passwort",
         "accountLocked": "Ihr Konto wurde gesperrt. Bitte versuchen Sie es später erneut.",
         "emailRequired": "E-Mail ist erforderlich",
         "passwordRequired": "Passwort ist erforderlich",
         "invalidEmail": "Ungültige E-Mail-Adresse",
-        "emailNotVerified": "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse."
+        "emailNotVerified": "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse.",
+        "ssoFailed": "SSO-Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut."
       },
       "comic": {
         "badge": "Admin",
@@ -628,6 +643,40 @@
           "expired": "Abgelaufen",
           "unknown": "Unbekannt"
         }
+      }
+    },
+    "organizationTse": {
+      "title": "TSE",
+      "description": "Technische Sicherheitseinrichtung (KassenSichV) — signiert jede Zahlung fiskalkonform.",
+      "enabled": "TSE aktiviert",
+      "provider": "Anbieter",
+      "providerFiskaly": "fiskaly (Cloud)",
+      "providerLocal": "Lokale Hardware (USB/SD, z.B. Swissbit)",
+      "fiskalyDescription": "Zugangsdaten für die fiskaly Cloud-TSE.",
+      "apiKey": "API-Key",
+      "apiKeyPlaceholder": "fiskaly API-Key",
+      "apiSecret": "API-Secret",
+      "apiSecretPlaceholder": "fiskaly API-Secret",
+      "tssId": "TSS-ID",
+      "tssIdPlaceholder": "Technical Security System ID",
+      "localDescription": "Signierung erfolgt lokal über den Drucker-Agenten, an dem der TSE-Stick angeschlossen ist — keine Internetverbindung zum Signieren nötig.",
+      "agentDeviceId": "Agent-Geräte-ID",
+      "agentDeviceIdPlaceholder": "Geräte-ID des Drucker-Agenten mit TSE-Stick",
+      "testConnection": "Verbindung testen",
+      "testSuccess": "Verbindung erfolgreich",
+      "testFailed": "Verbindungstest fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.",
+      "saveFailed": "Speichern fehlgeschlagen",
+      "success": "TSE-Einstellungen gespeichert",
+      "export": {
+        "title": "Datenexport (Übergabe)",
+        "description": "Signierte Transaktionen für einen Zeitraum exportieren — für die eigene Aufbewahrungspflicht bei gemieteter Hardware.",
+        "notConfigured": "TSE ist nicht konfiguriert.",
+        "client": "Client",
+        "clientOrgWide": "Organisationsweit (Online-Bestellungen)",
+        "periodStart": "Von",
+        "periodEnd": "Bis",
+        "download": "Export herunterladen",
+        "failed": "Export fehlgeschlagen"
       }
     },
     "organizationNotifications": {
@@ -1318,6 +1367,24 @@
     "title": "Organisationen",
     "subtitle": "Verwalten Sie Ihre Organisationen und deren Einstellungen",
     "create": "Organisation erstellen",
+    "import": {
+      "button": "Kunden importieren",
+      "title": "Kunden aus YAML importieren",
+      "description": "Laden Sie eine oder mehrere YAML-Dateien hoch, um Organisationen samt Admin-Zugang anzulegen. Ein erneuter Upload derselben Datei aktualisiert die zuvor erstellte Organisation.",
+      "filesLabel": "YAML-Dateien",
+      "submit": "Importieren",
+      "failed": "Import fehlgeschlagen",
+      "summarySuccess": "{created} erstellt, {updated} aktualisiert",
+      "summaryPartial": "{created} erstellt, {updated} aktualisiert, {failed} fehlgeschlagen",
+      "table": {
+        "file": "Datei",
+        "result": "Ergebnis",
+        "action": {
+          "created": "Erstellt",
+          "updated": "Aktualisiert"
+        }
+      }
+    },
     "empty": {
       "title": "Keine Organisationen",
       "description": "Erstellen Sie Ihre erste Organisation, um loszulegen."

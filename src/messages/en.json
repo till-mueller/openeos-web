@@ -41,13 +41,28 @@
       "deviceMode": "Use as device (POS terminal)",
       "resendVerification": "Resend email",
       "resendVerificationSent": "Confirmation email has been resent.",
+      "orDivider": "or",
+      "ssoButton": "Sign in with {provider}",
+      "ssoRedirecting": "Finishing sign-in …",
+      "highlights": {
+        "head": "Admin interface",
+        "mobile": "Mobile POS",
+        "mobileCopy": "Run it on phone or tablet — anywhere on the venue.",
+        "qrOrder": "Self-order (QR)",
+        "qrOrderCopy": "Guests order via QR themselves — less waiting, more revenue.",
+        "shifts": "Shift planning",
+        "shiftsCopy": "Plan shifts, volunteers sign up online — fully automatic.",
+        "stats": "Real-time analytics",
+        "statsCopy": "Revenue, best sellers, wait times — always in the loop."
+      },
       "errors": {
         "invalidCredentials": "Invalid email or password",
         "accountLocked": "Your account has been locked. Please try again later.",
         "emailRequired": "Email is required",
         "passwordRequired": "Password is required",
         "invalidEmail": "Invalid email address",
-        "emailNotVerified": "Please verify your email address first."
+        "emailNotVerified": "Please verify your email address first.",
+        "ssoFailed": "SSO sign-in failed. Please try again."
       },
       "comic": {
         "badge": "Admin",
@@ -628,6 +643,40 @@
           "expired": "Expired",
           "unknown": "Unknown"
         }
+      }
+    },
+    "organizationTse": {
+      "title": "TSE",
+      "description": "Technical security device (KassenSichV, German fiscalization law) — signs every payment for compliance.",
+      "enabled": "TSE enabled",
+      "provider": "Provider",
+      "providerFiskaly": "fiskaly (Cloud)",
+      "providerLocal": "Local hardware (USB/SD, e.g. Swissbit)",
+      "fiskalyDescription": "Credentials for the fiskaly cloud TSE.",
+      "apiKey": "API key",
+      "apiKeyPlaceholder": "fiskaly API key",
+      "apiSecret": "API secret",
+      "apiSecretPlaceholder": "fiskaly API secret",
+      "tssId": "TSS ID",
+      "tssIdPlaceholder": "Technical Security System ID",
+      "localDescription": "Signing happens locally on the printer-agent that has the TSE stick attached — no internet connection needed to sign.",
+      "agentDeviceId": "Agent device ID",
+      "agentDeviceIdPlaceholder": "Device ID of the printer-agent with the TSE stick",
+      "testConnection": "Test connection",
+      "testSuccess": "Connection successful",
+      "testFailed": "Connection test failed. Please check your credentials.",
+      "saveFailed": "Failed to save",
+      "success": "TSE settings saved",
+      "export": {
+        "title": "Data export (handover)",
+        "description": "Export signed transactions for a date range — for your own record-keeping obligation on rented hardware.",
+        "notConfigured": "TSE is not configured.",
+        "client": "Client",
+        "clientOrgWide": "Organization-wide (online orders)",
+        "periodStart": "From",
+        "periodEnd": "To",
+        "download": "Download export",
+        "failed": "Export failed"
       }
     },
     "organizationNotifications": {
@@ -1505,6 +1554,24 @@
     "title": "Organizations",
     "subtitle": "Manage your organizations and their settings",
     "create": "Create Organization",
+    "import": {
+      "button": "Import customers",
+      "title": "Import customers from YAML",
+      "description": "Upload one or more YAML files to create organizations with an admin account each. Re-uploading the same file updates the organization it previously created.",
+      "filesLabel": "YAML files",
+      "submit": "Import",
+      "failed": "Import failed",
+      "summarySuccess": "{created} created, {updated} updated",
+      "summaryPartial": "{created} created, {updated} updated, {failed} failed",
+      "table": {
+        "file": "File",
+        "result": "Result",
+        "action": {
+          "created": "Created",
+          "updated": "Updated"
+        }
+      }
+    },
     "empty": {
       "title": "No Organizations",
       "description": "Create your first organization to get started."

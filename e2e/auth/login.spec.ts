@@ -61,4 +61,10 @@ test.describe('Login', () => {
     await page.goto('/en/login');
     await expect(page.getByRole('button', { name: /sign in|login/i })).toBeVisible();
   });
+
+  test('hides the SSO button when the API has no OIDC provider configured', async ({ page }) => {
+    // Default/dev env: AUTHENTIK_ISSUER_URL etc. are unset on the API, so
+    // GET /auth/sso/status returns { enabled: false } and the button never renders.
+    await expect(loginPage.ssoButton).not.toBeVisible();
+  });
 });

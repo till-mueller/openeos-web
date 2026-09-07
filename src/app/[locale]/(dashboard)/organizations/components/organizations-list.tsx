@@ -8,12 +8,13 @@ import type { Organization } from '@/types';
 
 interface OrganizationsListProps {
   onCreateClick: () => void;
+  onImportClick: () => void;
   onEditClick: (organization: Organization) => void;
   onDeleteClick: (organization: Organization) => void;
   onManageMembersClick: (organization: Organization) => void;
 }
 
-export function OrganizationsList({ onCreateClick, onEditClick, onDeleteClick, onManageMembersClick }: OrganizationsListProps) {
+export function OrganizationsList({ onCreateClick, onImportClick, onEditClick, onDeleteClick, onManageMembersClick }: OrganizationsListProps) {
   const t = useTranslations('organizations');
   const { data, isLoading, error } = useAdminOrganizations();
   const organizations = data?.data;
@@ -37,9 +38,14 @@ export function OrganizationsList({ onCreateClick, onEditClick, onDeleteClick, o
           </svg>
         }
         action={
-          <button type="button" className="btn btn--primary" onClick={onCreateClick}>
-            {t('create')}
-          </button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button type="button" className="btn btn--ghost" onClick={onImportClick}>
+              {t('import.button')}
+            </button>
+            <button type="button" className="btn btn--primary" onClick={onCreateClick}>
+              {t('create')}
+            </button>
+          </div>
         }
       />
     );
@@ -65,9 +71,14 @@ export function OrganizationsList({ onCreateClick, onEditClick, onDeleteClick, o
             <h2 style={{ fontSize: 15, fontWeight: 700 }}>{t('title')}</h2>
             <span className="badge badge--neutral">{organizations.length}</span>
           </div>
-          <button type="button" className="btn btn--primary" style={{ fontSize: 12, padding: '6px 12px' }} onClick={onCreateClick}>
-            {t('create')}
-          </button>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button type="button" className="btn btn--ghost" style={{ fontSize: 12, padding: '6px 12px' }} onClick={onImportClick}>
+              {t('import.button')}
+            </button>
+            <button type="button" className="btn btn--primary" style={{ fontSize: 12, padding: '6px 12px' }} onClick={onCreateClick}>
+              {t('create')}
+            </button>
+          </div>
         </div>
         {organizations.map((org) => (
           <div key={org.id} className="app-card" style={{ padding: 14 }}>
@@ -138,9 +149,14 @@ export function OrganizationsList({ onCreateClick, onEditClick, onDeleteClick, o
             </h2>
             <p className="app-card__sub">{t('subtitle')}</p>
           </div>
-          <button type="button" className="btn btn--primary" onClick={onCreateClick}>
-            {t('create')}
-          </button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button type="button" className="btn btn--ghost" onClick={onImportClick}>
+              {t('import.button')}
+            </button>
+            <button type="button" className="btn btn--primary" onClick={onCreateClick}>
+              {t('create')}
+            </button>
+          </div>
         </div>
 
         <div style={{ overflowX: 'auto' }}>

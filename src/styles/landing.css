@@ -1477,6 +1477,18 @@ body:has(.landing) {
   font-weight: 500;
 }
 .landing .auth-form__forgot:hover { text-decoration: underline; }
+.landing .auth-form__divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 24px 0;
+  font-size: 12px; color: var(--mute);
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.landing .auth-form__divider::before,
+.landing .auth-form__divider::after {
+  content: ""; flex: 1;
+  height: 1px;
+  background: color-mix(in oklab, var(--ink) 12%, transparent);
+}
 .landing .auth-form__alt {
   margin: 28px 0 0;
   font-size: 14px;

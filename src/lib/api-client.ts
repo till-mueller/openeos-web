@@ -1,7 +1,7 @@
 import { ApiException, type ApiError, type ApiResponse } from '@/types/api';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-const API_URL = `${API_BASE}/api`;
+export const API_URL = `${API_BASE}/api`;
 // Device token stays in localStorage: it identifies a paired, already-trusted
 // physical device (kiosk/POS terminal), not a user session, mirroring how
 // the printer-agent and TV apps hold their own device tokens on disk. The
@@ -293,6 +293,11 @@ export const authApi = {
     }),
 
   me: () => apiClient.get<ApiResponse<{ user: import('@/types/auth').User }>>('/auth/me'),
+
+  ssoStatus: () =>
+    apiClient.get<ApiResponse<{ enabled: boolean; provider: string }>>('/auth/sso/status', {
+      skipAuth: true,
+    }),
 
   /**
    * Wie `me()`, aber ohne die automatische 401-Behandlung: Das Cookie wird
@@ -868,6 +873,23 @@ export const adminApi = {
 
   updateOrganization: (id: string, data: Partial<import('@/types/organization').Organization>) =>
     apiClient.patch<ApiResponse<import('@/types/organization').Organization>>(`/admin/organizations/${id}`, data),
+
+  importCustomers: async (files: File[]) => {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('files', file));
+    const response = await fetch(`${API_URL}/admin/organizations/import`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiClient.getAccessToken()}`,
+      },
+      body: formData,
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => null);
+      throw new Error(body?.message || 'Import failed');
+    }
+    return response.json() as Promise<ApiResponse<import('@/types/admin').CustomerImportResult[]>>;
+  },
 
   // Stats
   getOverviewStats: () =>
@@ -1757,6 +1779,40 @@ export const sumupApi = {
     apiClient.post<ApiResponse<{ success: boolean }>>(
       `/organizations/${organizationId}/sumup/test-connection`
     ),
+};
+
+// TSE (Technische Sicherheitseinrichtung / KassenSichV fiscalization) API
+export const tseApi = {
+  testConnection: (organizationId: string) =>
+    apiClient.post<ApiResponse<{ ok: boolean; message?: string }>>(
+      `/organizations/${organizationId}/tse/test-connection`
+    ),
+
+  /** All TSE client ids this org has signed under (org-wide + one per till). */
+  listClients: (organizationId: string) =>
+    apiClient.get<ApiResponse<string[]>>(`/organizations/${organizationId}/tse/clients`),
+
+  /** Handover export for the weekend-rental model — fetched with the user's
+   *  JWT attached and resolved to a Blob ready for object-URL download. */
+  exportData: async (
+    organizationId: string,
+    periodStart: string,
+    periodEnd: string,
+    clientId?: string
+  ): Promise<Blob> => {
+    const params = new URLSearchParams({ periodStart, periodEnd });
+    if (clientId) params.set('clientId', clientId);
+    const url = `${API_URL}/organizations/${organizationId}/tse/export?${params.toString()}`;
+    const token = apiClient.getAccessToken();
+    const res = await fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      throw new Error(`TSE-Export fehlgeschlagen (${res.status})`);
+    }
+    return res.blob();
+  },
 };
 
 // Setup API (Initial setup, no auth required)
