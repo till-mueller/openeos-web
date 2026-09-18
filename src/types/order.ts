@@ -1,5 +1,6 @@
 import type { Product } from './product';
 import type { Category } from './category';
+import type { Payment } from './payment';
 
 // Enums
 export type OrderStatus = 'open' | 'in_progress' | 'ready' | 'completed' | 'cancelled';
@@ -91,6 +92,23 @@ export interface Order {
   createdByUser?: { id: string; firstName: string; lastName: string } | null;
   /** Device/terminal that created the order. */
   createdByDevice?: { id: string; name: string } | null;
+  /** Only present when the list/detail request passed includePayments. */
+  payments?: Payment[];
+}
+
+/** Aggregate TSE status across an order's payments, for a single badge in the list.
+ *  'none': no captured payments yet (nothing to have signed). 'unsigned': has a
+ *  captured payment with no tseData at all (TSE off, or not registered yet).
+ *  'failed': at least one payment's TSE signing attempt failed. 'signed': every
+ *  captured payment carries a successful signature. */
+export type OrderTseStatus = 'none' | 'unsigned' | 'failed' | 'signed';
+
+export function getOrderTseStatus(order: Pick<Order, 'payments'>): OrderTseStatus {
+  const payments = order.payments;
+  if (!payments || payments.length === 0) return 'none';
+  if (payments.some((p) => p.tseData?.failed)) return 'failed';
+  if (payments.some((p) => !p.tseData)) return 'unsigned';
+  return 'signed';
 }
 
 export type OrderChannel = 'service' | 'counter' | 'online';
@@ -165,12 +183,13 @@ export interface QueryOrdersParams {
   dateFrom?: string;
   dateTo?: string;
   includeItems?: boolean;
+  includePayments?: boolean;
   page?: number;
   limit?: number;
 }
 
 /** Filter params accepted by GET /organizations/:id/orders/stats (same filters, no paging). */
-export type QueryOrderStatsParams = Omit<QueryOrdersParams, 'page' | 'limit' | 'includeItems'>;
+export type QueryOrderStatsParams = Omit<QueryOrdersParams, 'page' | 'limit' | 'includeItems' | 'includePayments'>;
 
 /** Aggregates over ALL orders matching the filters (not just the current page). */
 export interface OrderStats {

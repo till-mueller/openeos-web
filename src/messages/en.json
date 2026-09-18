@@ -1888,8 +1888,17 @@
       "items": "Items",
       "status": "Status",
       "payment": "Payment",
+      "tse": "TSE",
       "total": "Total",
       "createdAt": "Created"
+    },
+    "tseStatus": {
+      "signed": "Signed",
+      "signedHint": "Every payment on this order was successfully signed through the TSE.",
+      "unsigned": "Unsigned",
+      "unsignedHint": "This order has a captured payment with no TSE signature yet — it will retry on the next payment, or check Settings → TSE.",
+      "failed": "Sign failed",
+      "failedHint": "The TSE rejected or was unreachable for at least one payment on this order (fail-open: the sale still went through). Check Settings → TSE."
     },
     "tableLabel": "Table {table}",
     "channel": {

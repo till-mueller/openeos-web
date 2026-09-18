@@ -8,10 +8,12 @@ import { ordersApi, eventsApi } from '@/lib/api-client';
 import { formatDateTime, formatCurrency } from '@/utils/format';
 import {
   getOrderChannel,
+  getOrderTseStatus,
   type Order,
   type OrderChannel,
   type OrderStatus,
   type OrderPaymentStatus,
+  type OrderTseStatus,
 } from '@/types/order';
 import { OrderDetailModal } from './order-detail-modal';
 
@@ -21,6 +23,12 @@ const statusBadge: Record<OrderStatus, string> = {
   ready: 'badge badge--info',
   completed: 'badge badge--success',
   cancelled: 'badge badge--error',
+};
+
+const tseBadge: Record<Exclude<OrderTseStatus, 'none'>, string> = {
+  signed: 'badge badge--success',
+  unsigned: 'badge badge--warning',
+  failed: 'badge badge--error',
 };
 
 const paymentBadge: Record<OrderPaymentStatus, string> = {
@@ -49,6 +57,7 @@ export function OrdersList() {
   const t = useTranslations();
   const { currentOrganization } = useAuthStore();
   const organizationId = currentOrganization?.organizationId;
+  const tseEnabled = !!currentOrganization?.organization?.settings?.tse?.enabled;
 
   const [statusFilter, setStatusFilter] = useState<OrderStatus | 'all'>('all');
   const [paymentFilter, setPaymentFilter] = useState<OrderPaymentStatus | 'all'>('all');
@@ -82,6 +91,7 @@ export function OrdersList() {
     page: String(page),
     limit: String(PAGE_LIMIT),
     includeItems: 'true',
+    ...(tseEnabled ? { includePayments: 'true' } : {}),
   };
 
   const {
@@ -274,6 +284,7 @@ export function OrdersList() {
                 <th>{t('orders.columns.items')}</th>
                 <th>{t('orders.columns.status')}</th>
                 <th>{t('orders.columns.payment')}</th>
+                {tseEnabled && <th>{t('orders.columns.tse')}</th>}
                 <th className="text-right">{t('orders.columns.total')}</th>
                 <th>{t('orders.columns.createdAt')}</th>
               </tr>
@@ -284,6 +295,7 @@ export function OrdersList() {
                 const paymentCls = paymentBadge[order.paymentStatus] ?? 'badge badge--neutral';
                 const channel = getOrderChannel(order);
                 const creator = creatorLabel(order);
+                const tseStatus = getOrderTseStatus(order);
 
                 return (
                   <tr
@@ -353,6 +365,17 @@ export function OrdersList() {
                     <td>
                       <span className={paymentCls}>{t(`orders.paymentStatus.${order.paymentStatus}`)}</span>
                     </td>
+                    {tseEnabled && (
+                      <td>
+                        {tseStatus === 'none' ? (
+                          <span style={{ color: 'color-mix(in oklab, var(--ink) 35%, transparent)' }}>-</span>
+                        ) : (
+                          <span className={tseBadge[tseStatus]} title={t(`orders.tseStatus.${tseStatus}Hint`)}>
+                            {t(`orders.tseStatus.${tseStatus}`)}
+                          </span>
+                        )}
+                      </td>
+                    )}
                     <td className="mono text-right">
                       <div style={{ fontWeight: 600 }}>{formatCurrency(order.total)}</div>
                       {order.paidAmount > 0 && order.paidAmount < order.total && (

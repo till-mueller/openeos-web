@@ -11,6 +11,27 @@ export interface PaymentMetadata {
   [key: string]: unknown;
 }
 
+/** TSE (KassenSichV) signature data attached once a payment is signed. `failed: true`
+ *  means signing was attempted and the TSE was unreachable/rejected it (fail-open --
+ *  the sale still went through); no tseData at all means TSE isn't configured for
+ *  this org, or the payment predates it being enabled. */
+export interface TseTransactionData {
+  provider: 'fiskaly' | 'local' | 'none';
+  clientId: string;
+  transactionNumber: number;
+  serialNumber: string;
+  signatureCounter: number;
+  signatureValue: string;
+  signatureAlgorithm: string;
+  startTime: string;
+  endTime: string;
+  processType: string;
+  processData: string;
+  qrCodeData: string;
+  failed?: boolean;
+  failureReason?: string;
+}
+
 // Payment
 export interface Payment {
   id: string;
@@ -23,6 +44,7 @@ export interface Payment {
   metadata: PaymentMetadata;
   processedByUserId: string | null;
   processedByDeviceId: string | null;
+  tseData?: TseTransactionData | null;
   createdAt: string;
   updatedAt: string;
 }

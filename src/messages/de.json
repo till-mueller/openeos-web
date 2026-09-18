@@ -1888,8 +1888,17 @@
       "items": "Artikel",
       "status": "Status",
       "payment": "Zahlung",
+      "tse": "TSE",
       "total": "Gesamt",
       "createdAt": "Erstellt"
+    },
+    "tseStatus": {
+      "signed": "Signiert",
+      "signedHint": "Alle Zahlungen dieser Bestellung wurden erfolgreich über die TSE signiert.",
+      "unsigned": "Unsigniert",
+      "unsignedHint": "Diese Bestellung hat eine erfasste Zahlung ohne TSE-Signatur — wird bei der nächsten Zahlung erneut versucht, oder unter Einstellungen → TSE prüfen.",
+      "failed": "Signierung fehlgeschlagen",
+      "failedHint": "Die TSE hat mindestens eine Zahlung dieser Bestellung abgelehnt oder war nicht erreichbar (Fail-Open: der Verkauf ging trotzdem durch). Unter Einstellungen → TSE prüfen."
     },
     "tableLabel": "Tisch {table}",
     "channel": {

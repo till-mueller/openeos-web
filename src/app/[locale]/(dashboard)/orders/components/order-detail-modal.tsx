@@ -5,11 +5,13 @@ import { formatCurrency, formatDateTime } from '@/utils/format';
 import { DialogCloseButton } from '@/components/shared/dialog-close-button';
 import {
   getOrderChannel,
+  getOrderTseStatus,
   type Order,
   type OrderChannel,
   type OrderItem,
   type OrderPaymentStatus,
   type OrderStatus,
+  type OrderTseStatus,
 } from '@/types/order';
 
 const statusBadge: Record<OrderStatus, string> = {
@@ -25,6 +27,12 @@ const paymentBadge: Record<OrderPaymentStatus, string> = {
   partly_paid: 'badge badge--warning',
   paid: 'badge badge--success',
   refunded: 'badge badge--neutral',
+};
+
+const tseBadge: Record<Exclude<OrderTseStatus, 'none'>, string> = {
+  signed: 'badge badge--success',
+  unsigned: 'badge badge--warning',
+  failed: 'badge badge--error',
 };
 
 const channelBadge: Record<OrderChannel, string> = {
@@ -45,6 +53,7 @@ export function OrderDetailModal({ order, creatorLabel, onClose }: OrderDetailMo
   if (!order) return null;
 
   const channel = getOrderChannel(order);
+  const tseStatus = getOrderTseStatus(order);
   const discount = Number(order.discountAmount || 0);
   const pfand = Number(order.pfandTotal || 0);
   const tip = Number(order.tipAmount || 0);
@@ -68,6 +77,11 @@ export function OrderDetailModal({ order, creatorLabel, onClose }: OrderDetailMo
             <span className={channelBadge[channel]}>{t(`orders.channel.${channel}`)}</span>
             <span className={statusBadge[order.status]}>{t(`orders.status.${order.status}`)}</span>
             <span className={paymentBadge[order.paymentStatus]}>{t(`orders.paymentStatus.${order.paymentStatus}`)}</span>
+            {tseStatus !== 'none' && (
+              <span className={tseBadge[tseStatus]} title={t(`orders.tseStatus.${tseStatus}Hint`)}>
+                {t(`orders.tseStatus.${tseStatus}`)}
+              </span>
+            )}
           </div>
 
           {/* Meta grid */}
