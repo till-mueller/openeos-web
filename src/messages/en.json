@@ -676,6 +676,7 @@
       "export": {
         "title": "Data export (handover)",
         "description": "Export signed transactions for a date range — for your own record-keeping obligation on rented hardware.",
+        "fiskalyScopeWarning": "With fiskaly, this always exports the whole TSS's log — every client's transactions, not just the one selected below. fiskaly has no per-client or date-range filter.",
         "notConfigured": "TSE is not configured.",
         "client": "Client",
         "clientOrgWide": "Organization-wide (online orders)",

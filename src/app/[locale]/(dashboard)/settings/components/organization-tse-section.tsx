@@ -363,6 +363,11 @@ export function OrganizationTseSection() {
           <p style={{ fontSize: 13, color: 'color-mix(in oklab, var(--ink) 50%, transparent)' }}>
             {t('export.description')}
           </p>
+          {isConfigured && tseSettings?.provider === 'fiskaly' && (
+            <p style={{ marginTop: 6 }}>
+              <span className="badge badge--warning" style={{ fontWeight: 400 }}>{t('export.fiskalyScopeWarning')}</span>
+            </p>
+          )}
         </div>
 
         {!isConfigured ? (

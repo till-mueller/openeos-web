@@ -676,6 +676,7 @@
       "export": {
         "title": "Datenexport (Übergabe)",
         "description": "Signierte Transaktionen für einen Zeitraum exportieren — für die eigene Aufbewahrungspflicht bei gemieteter Hardware.",
+        "fiskalyScopeWarning": "Bei fiskaly wird immer das gesamte TSS-Protokoll exportiert — die Transaktionen aller Clients, nicht nur des unten ausgewählten. fiskaly bietet keinen Filter nach Client oder Zeitraum.",
         "notConfigured": "TSE ist nicht konfiguriert.",
         "client": "Client",
         "clientOrgWide": "Organisationsweit (Online-Bestellungen)",
