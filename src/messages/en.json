@@ -667,6 +667,7 @@
       "testFailed": "Connection test failed. Please check your credentials.",
       "saveFailed": "Failed to save",
       "success": "TSE settings saved",
+      "registerClientFailed": "Settings saved, but the TSE client couldn't be registered yet: {message}. It will retry automatically on the first payment.",
       "export": {
         "title": "Data export (handover)",
         "description": "Export signed transactions for a date range — for your own record-keeping obligation on rented hardware.",

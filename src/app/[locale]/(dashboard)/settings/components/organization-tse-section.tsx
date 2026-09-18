@@ -58,6 +58,27 @@ export function OrganizationTseSection() {
       }
       toast.success(t('success'));
       queryClient.invalidateQueries({ queryKey: ['organizations'] });
+
+      // Best-effort, not part of the save transaction itself: register the
+      // org's default TSE client right away rather than waiting for the
+      // first real payment (see TseService.registerClient's doc comment --
+      // a provider's TSS can lock out new client registration within
+      // minutes of creation, so waiting loses that race in practice). Never
+      // blocks or reverts the save above; a failure here just means the
+      // lazy per-payment registration is still the fallback, same as before
+      // this existed.
+      if (currentOrganization && enabled) {
+        tseApi
+          .registerClient(currentOrganization.organizationId)
+          .then((res) => {
+            if (!res.data?.ok) {
+              toast.error(t('registerClientFailed', { message: res.data?.message || t('testFailed') }));
+            }
+          })
+          .catch(() => {
+            toast.error(t('registerClientFailed', { message: t('testFailed') }));
+          });
+      }
     },
     onError: () => {
       toast.error(t('saveFailed'));

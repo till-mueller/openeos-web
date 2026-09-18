@@ -667,6 +667,7 @@
       "testFailed": "Verbindungstest fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.",
       "saveFailed": "Speichern fehlgeschlagen",
       "success": "TSE-Einstellungen gespeichert",
+      "registerClientFailed": "Einstellungen gespeichert, aber TSE-Client konnte noch nicht registriert werden: {message}. Wird bei der ersten Zahlung automatisch erneut versucht.",
       "export": {
         "title": "Datenexport (Übergabe)",
         "description": "Signierte Transaktionen für einen Zeitraum exportieren — für die eigene Aufbewahrungspflicht bei gemieteter Hardware.",

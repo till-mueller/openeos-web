@@ -1788,6 +1788,14 @@ export const tseApi = {
       `/organizations/${organizationId}/tse/test-connection`
     ),
 
+  /** Eagerly registers the org's default TSE client -- a real mutation
+   *  against the provider, unlike testConnection above. Called right after
+   *  saving TSE settings, not as part of testing them. */
+  registerClient: (organizationId: string) =>
+    apiClient.post<ApiResponse<{ ok: boolean; message?: string }>>(
+      `/organizations/${organizationId}/tse/register-client`
+    ),
+
   /** All TSE client ids this org has signed under (org-wide + one per till). */
   listClients: (organizationId: string) =>
     apiClient.get<ApiResponse<string[]>>(`/organizations/${organizationId}/tse/clients`),
