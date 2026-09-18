@@ -85,6 +85,43 @@ export function OrganizationTseSection() {
     },
   });
 
+  const createTss = useMutation({
+    mutationFn: async () => {
+      if (!currentOrganization) throw new Error('No organization');
+      const response = await tseApi.createFiskalyTss(currentOrganization.organizationId, apiKey, apiSecret);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (!data.ok || !data.tssId) {
+        toast.error(data.message || t('createTssFailed'));
+        return;
+      }
+      setTssId(data.tssId);
+      setEnabled(true);
+      // createTss already persisted enabled/provider/fiskaly (incl. tssId)
+      // on the backend -- mirror that into the local store the same way
+      // saveSettings' onSuccess does, so Test connection unlocks
+      // immediately without a page reload or a separate Save click.
+      if (currentOrganization?.organization) {
+        setCurrentOrganization({
+          ...currentOrganization,
+          organization: {
+            ...currentOrganization.organization,
+            settings: {
+              ...currentOrganization.organization.settings,
+              tse: { enabled: true, provider: 'fiskaly', fiskaly: { apiKey, apiSecret, tssId: data.tssId } },
+            },
+          } as unknown as typeof currentOrganization.organization,
+        });
+      }
+      toast.success(data.message || t('createTssSuccess'));
+      queryClient.invalidateQueries({ queryKey: ['organizations'] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('createTssFailed'));
+    },
+  });
+
   const testConnection = useMutation({
     mutationFn: async () => {
       if (!currentOrganization) throw new Error('No organization');
@@ -228,10 +265,28 @@ export function OrganizationTseSection() {
                     id="tseTssId"
                     className="input"
                     value={tssId}
-                    onChange={(e) => setTssId(e.target.value)}
+                    readOnly
                     placeholder={t('tssIdPlaceholder')}
                   />
+                  <p style={{ fontSize: 12, color: 'color-mix(in oklab, var(--ink) 50%, transparent)', marginTop: 4 }}>
+                    {t('tssIdHint')}
+                  </p>
                 </div>
+
+                <button
+                  type="button"
+                  className="btn btn--ghost"
+                  onClick={() => createTss.mutate()}
+                  disabled={!apiKey || !apiSecret || createTss.isPending}
+                >
+                  {createTss.isPending ? (
+                    <>
+                      <span style={{ display: 'inline-block', width: 14, height: 14, borderRadius: '50%', border: '2px solid currentColor', borderTopColor: 'transparent', animation: 'spin 0.75s linear infinite' }} />
+                      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                      {t('createTssPending')}
+                    </>
+                  ) : t('createTss')}
+                </button>
               </div>
             </div>
           ) : (

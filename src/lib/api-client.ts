@@ -1796,6 +1796,16 @@ export const tseApi = {
       `/organizations/${organizationId}/tse/register-client`
     ),
 
+  /** Creates and fully initializes a brand-new fiskaly TSS from just an API
+   *  key/secret -- the only supported way to get a TSS into this app (see
+   *  the backend's own doc comment on why "paste in a tssId" never works).
+   *  Takes ~35s+ (fiskaly's required settle time between lifecycle steps). */
+  createFiskalyTss: (organizationId: string, apiKey: string, apiSecret: string) =>
+    apiClient.post<ApiResponse<{ ok: boolean; tssId?: string; message?: string }>>(
+      `/organizations/${organizationId}/tse/fiskaly/create`,
+      { apiKey, apiSecret }
+    ),
+
   /** All TSE client ids this org has signed under (org-wide + one per till). */
   listClients: (organizationId: string) =>
     apiClient.get<ApiResponse<string[]>>(`/organizations/${organizationId}/tse/clients`),
