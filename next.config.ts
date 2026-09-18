@@ -4,8 +4,6 @@ import type { NextConfig } from 'next';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
-const isDev = process.env.NODE_ENV === 'development';
-
 // No security headers were set anywhere before this (no CSP, no
 // X-Frame-Options, no HSTS, etc.). This is a pragmatic baseline, not a
 // strict nonce-based CSP — 'unsafe-inline' on script/style is here because
@@ -15,45 +13,23 @@ const isDev = process.env.NODE_ENV === 'development';
 // still blocks the two things this audit flagged as missing outright:
 // clickjacking (frame-ancestors) and MIME-sniffing (X-Content-Type-Options).
 //
-// connect-src is built at request time (headers() re-runs per request in
-// standalone output, so process.env here reflects the container's actual
-// runtime env, same as docker-entrypoint.sh's rewrite). https: covers the
-// normal case (API/shop on their own HTTPS subdomains). In development the
-// API is plain http on another port, which is neither 'self' nor https:,
-// so it has to be allowed explicitly. Self-hosted production deployments
-// that publish the API directly over plain HTTP too (e.g. Tailscale-only,
-// no reverse-proxy TLS) need their exact origin allow-listed the same way —
-// https: alone never matches an http:// fetch target.
-function connectSrcOrigins(): string {
-  if (isDev) {
-    return "'self' https: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*";
-  }
-  const extra = [process.env.NEXT_PUBLIC_API_URL, process.env.NEXT_PUBLIC_SHOP_URL]
-    .filter((url): url is string => !!url && url.startsWith('http://'))
-    .map((url) => new URL(url).origin);
-  return ["'self'", 'https:', ...new Set(extra)].join(' ');
-}
-
+// Content-Security-Policy is deliberately NOT set here: next.config.ts's
+// headers() is resolved once at `next build` time into a static
+// .next/routes-manifest.json entry, not re-invoked per request — so
+// process.env.NEXT_PUBLIC_API_URL here would see whatever CI's build-time
+// placeholder/sentinel was, never the container's actual runtime value
+// (that value only exists after docker-entrypoint.sh's post-build rewrite).
+// connect-src needs the real runtime origin, so it's set in middleware.ts
+// instead, which genuinely re-runs per request. Keeping it here too would
+// also be wrong even with a correct value: multiple CSP headers intersect
+// (logical AND) rather than merge, so a stale build-time header would
+// silently re-narrow whatever middleware sets.
 function buildSecurityHeaders() {
   return [
     { key: 'X-Content-Type-Options', value: 'nosniff' },
     { key: 'X-Frame-Options', value: 'DENY' },
     { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
     { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-    {
-      key: 'Content-Security-Policy',
-      value: [
-        "default-src 'self'",
-        "script-src 'self' 'unsafe-inline'",
-        "style-src 'self' 'unsafe-inline'",
-        "img-src 'self' data: blob: https:",
-        "font-src 'self' data:",
-        `connect-src ${connectSrcOrigins()}`,
-        "frame-ancestors 'none'",
-        "base-uri 'self'",
-        "object-src 'none'",
-      ].join('; '),
-    },
   ];
 }
 
