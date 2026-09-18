@@ -91,7 +91,9 @@ export function OrdersList() {
     page: String(page),
     limit: String(PAGE_LIMIT),
     includeItems: 'true',
-    ...(tseEnabled ? { includePayments: 'true' } : {}),
+    // Needed for the TSE column (only when enabled) and for the receipt
+    // view/email actions in the detail modal (always, independent of TSE).
+    includePayments: 'true',
   };
 
   const {
@@ -425,6 +427,7 @@ export function OrdersList() {
       <OrderDetailModal
         order={selectedOrder}
         creatorLabel={selectedOrder ? creatorLabel(selectedOrder) : null}
+        organizationId={organizationId || ''}
         onClose={() => setSelectedOrder(null)}
       />
     </>

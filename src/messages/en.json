@@ -1901,6 +1901,12 @@
       "failed": "Sign failed",
       "failedHint": "The TSE rejected or was unreachable for at least one payment on this order (fail-open: the sale still went through). Check Settings → TSE."
     },
+    "paymentMethod": {
+      "cash": "Cash",
+      "card": "Card",
+      "sumup_terminal": "SumUp terminal",
+      "sumup_online": "SumUp online"
+    },
     "tableLabel": "Table {table}",
     "channel": {
       "service": "Table service",
@@ -1924,7 +1930,14 @@
       "discount": "Discount",
       "pfand": "Deposit",
       "tip": "Tip",
-      "total": "Total"
+      "total": "Total",
+      "receipts": "Receipts",
+      "viewReceipt": "View",
+      "emailReceipt": "Email",
+      "emailPlaceholder": "customer@example.com",
+      "send": "Send",
+      "receiptEmailSent": "Receipt emailed to {email}",
+      "receiptFailed": "Couldn't load the receipt. Please try again."
     },
     "pagination": {
       "prev": "Previous",

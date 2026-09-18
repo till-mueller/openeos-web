@@ -1901,6 +1901,12 @@
       "failed": "Signierung fehlgeschlagen",
       "failedHint": "Die TSE hat mindestens eine Zahlung dieser Bestellung abgelehnt oder war nicht erreichbar (Fail-Open: der Verkauf ging trotzdem durch). Unter Einstellungen → TSE prüfen."
     },
+    "paymentMethod": {
+      "cash": "Bar",
+      "card": "Karte",
+      "sumup_terminal": "SumUp-Terminal",
+      "sumup_online": "SumUp online"
+    },
     "tableLabel": "Tisch {table}",
     "channel": {
       "service": "Bedienung",
@@ -1924,7 +1930,14 @@
       "discount": "Rabatt",
       "pfand": "Pfand",
       "tip": "Trinkgeld",
-      "total": "Gesamt"
+      "total": "Gesamt",
+      "receipts": "Belege",
+      "viewReceipt": "Ansehen",
+      "emailReceipt": "E-Mail",
+      "emailPlaceholder": "kunde@beispiel.de",
+      "send": "Senden",
+      "receiptEmailSent": "Beleg an {email} gesendet",
+      "receiptFailed": "Beleg konnte nicht geladen werden. Bitte erneut versuchen."
     },
     "pagination": {
       "prev": "Zurück",

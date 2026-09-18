@@ -1,8 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useMutation } from '@tanstack/react-query';
 import { formatCurrency, formatDateTime } from '@/utils/format';
 import { DialogCloseButton } from '@/components/shared/dialog-close-button';
+import { paymentsApi } from '@/lib/api-client';
+import { toast } from '@/components/shared/toast';
 import {
   getOrderChannel,
   getOrderTseStatus,
@@ -13,6 +17,7 @@ import {
   type OrderStatus,
   type OrderTseStatus,
 } from '@/types/order';
+import type { Payment } from '@/types/payment';
 
 const statusBadge: Record<OrderStatus, string> = {
   open: 'badge badge--neutral',
@@ -44,10 +49,11 @@ const channelBadge: Record<OrderChannel, string> = {
 interface OrderDetailModalProps {
   order: Order | null;
   creatorLabel: string | null;
+  organizationId: string;
   onClose: () => void;
 }
 
-export function OrderDetailModal({ order, creatorLabel, onClose }: OrderDetailModalProps) {
+export function OrderDetailModal({ order, creatorLabel, organizationId, onClose }: OrderDetailModalProps) {
   const t = useTranslations();
 
   if (!order) return null;
@@ -123,6 +129,18 @@ export function OrderDetailModal({ order, creatorLabel, onClose }: OrderDetailMo
               <TotalRow label={t('orders.paid')} value={formatCurrency(order.paidAmount)} />
             )}
           </div>
+
+          {/* Receipts — view/email independent of receipt-printing/printer config */}
+          {order.payments && order.payments.length > 0 && (
+            <div style={{ borderTop: '1px solid color-mix(in oklab, var(--ink) 10%, transparent)', paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'color-mix(in oklab, var(--ink) 55%, transparent)' }}>
+                {t('orders.detail.receipts')}
+              </div>
+              {order.payments.map((payment) => (
+                <PaymentReceiptRow key={payment.id} payment={payment} organizationId={organizationId} />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="modal__foot">
@@ -171,6 +189,92 @@ function ItemRow({ item, refillLabel }: { item: OrderItem; refillLabel: string }
       <div className="mono" style={{ flexShrink: 0, fontWeight: 600 }}>
         {formatCurrency(item.totalPrice)}
       </div>
+    </div>
+  );
+}
+
+function PaymentReceiptRow({ payment, organizationId }: { payment: Payment; organizationId: string }) {
+  const t = useTranslations();
+  const [showEmailInput, setShowEmailInput] = useState(false);
+  const [email, setEmail] = useState('');
+
+  const viewReceipt = useMutation({
+    mutationFn: async () => {
+      const blob = await paymentsApi.getReceiptPdf(organizationId, payment.id);
+      const url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      // Revoke after a delay rather than immediately — the new tab needs
+      // time to actually load the blob URL before it's freed.
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('orders.detail.receiptFailed'));
+    },
+  });
+
+  const emailReceipt = useMutation({
+    mutationFn: async () => {
+      const response = await paymentsApi.emailReceipt(organizationId, payment.id, email);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data.ok) {
+        toast.success(t('orders.detail.receiptEmailSent', { email }));
+        setShowEmailInput(false);
+        setEmail('');
+      } else {
+        toast.error(data.message || t('orders.detail.receiptFailed'));
+      }
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('orders.detail.receiptFailed'));
+    },
+  });
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 13 }}>
+        <span>
+          {formatCurrency(payment.amount)} · {t(`orders.paymentMethod.${payment.paymentMethod}`)}
+        </span>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
+            onClick={() => viewReceipt.mutate()}
+            disabled={viewReceipt.isPending}
+          >
+            {t('orders.detail.viewReceipt')}
+          </button>
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
+            onClick={() => setShowEmailInput((v) => !v)}
+          >
+            {t('orders.detail.emailReceipt')}
+          </button>
+        </div>
+      </div>
+      {showEmailInput && (
+        <div style={{ display: 'flex', gap: 6 }}>
+          <input
+            type="email"
+            className="input"
+            style={{ flex: 1 }}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={t('orders.detail.emailPlaceholder')}
+          />
+          <button
+            type="button"
+            className="btn btn--primary btn--sm"
+            onClick={() => emailReceipt.mutate()}
+            disabled={!email || emailReceipt.isPending}
+          >
+            {emailReceipt.isPending ? '…' : t('orders.detail.send')}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

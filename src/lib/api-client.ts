@@ -846,6 +846,29 @@ export const paymentsApi = {
 
   refund: (organizationId: string, paymentId: string) =>
     apiClient.post<ApiResponse<import('@/types/payment').Payment>>(`/organizations/${organizationId}/payments/${paymentId}/refund`),
+
+  /** Fetches the receipt PDF with the user's JWT attached and resolves to a
+   *  Blob ready for an object-URL (same pattern as tseApi.exportData) --
+   *  works regardless of the org's receipt-printing setting. */
+  getReceiptPdf: async (organizationId: string, paymentId: string): Promise<Blob> => {
+    const url = `${API_URL}/organizations/${organizationId}/payments/${paymentId}/receipt`;
+    const token = apiClient.getAccessToken();
+    const res = await fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      throw new Error(`Beleg konnte nicht geladen werden (${res.status})`);
+    }
+    return res.blob();
+  },
+
+  /** Ad-hoc email -- no stored customer address, caller supplies one at send time. */
+  emailReceipt: (organizationId: string, paymentId: string, email: string) =>
+    apiClient.post<ApiResponse<{ ok: boolean; message?: string }>>(
+      `/organizations/${organizationId}/payments/${paymentId}/receipt/email`,
+      { email }
+    ),
 };
 
 // Admin API (Super-Admin only)
