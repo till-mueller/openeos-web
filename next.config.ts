@@ -14,35 +14,48 @@ const isDev = process.env.NODE_ENV === 'development';
 // middleware, which is a larger change than this pass covers. Even this
 // still blocks the two things this audit flagged as missing outright:
 // clickjacking (frame-ancestors) and MIME-sniffing (X-Content-Type-Options).
-const securityHeaders = [
-  { key: 'X-Content-Type-Options', value: 'nosniff' },
-  { key: 'X-Frame-Options', value: 'DENY' },
-  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-  {
-    key: 'Content-Security-Policy',
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https:",
-      "font-src 'self' data:",
-      // API/shop run on separate subdomains (NEXT_PUBLIC_API_URL /
-      // NEXT_PUBLIC_SHOP_URL) — connect-src needs https: broadly rather
-      // than a fixed origin, since which domain is in play depends on the
-      // build (production vs. staging URLs are baked in as build args).
-      // In development the API is plain http on another port, which is
-      // neither 'self' nor https:, so it has to be allowed explicitly —
-      // otherwise the local dashboard silently can't reach the backend.
-      isDev
-        ? "connect-src 'self' https: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*"
-        : "connect-src 'self' https:",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "object-src 'none'",
-    ].join('; '),
-  },
-];
+//
+// connect-src is built at request time (headers() re-runs per request in
+// standalone output, so process.env here reflects the container's actual
+// runtime env, same as docker-entrypoint.sh's rewrite). https: covers the
+// normal case (API/shop on their own HTTPS subdomains). In development the
+// API is plain http on another port, which is neither 'self' nor https:,
+// so it has to be allowed explicitly. Self-hosted production deployments
+// that publish the API directly over plain HTTP too (e.g. Tailscale-only,
+// no reverse-proxy TLS) need their exact origin allow-listed the same way —
+// https: alone never matches an http:// fetch target.
+function connectSrcOrigins(): string {
+  if (isDev) {
+    return "'self' https: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*";
+  }
+  const extra = [process.env.NEXT_PUBLIC_API_URL, process.env.NEXT_PUBLIC_SHOP_URL]
+    .filter((url): url is string => !!url && url.startsWith('http://'))
+    .map((url) => new URL(url).origin);
+  return ["'self'", 'https:', ...new Set(extra)].join(' ');
+}
+
+function buildSecurityHeaders() {
+  return [
+    { key: 'X-Content-Type-Options', value: 'nosniff' },
+    { key: 'X-Frame-Options', value: 'DENY' },
+    { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+    { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+    {
+      key: 'Content-Security-Policy',
+      value: [
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline'",
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data: blob: https:",
+        "font-src 'self' data:",
+        `connect-src ${connectSrcOrigins()}`,
+        "frame-ancestors 'none'",
+        "base-uri 'self'",
+        "object-src 'none'",
+      ].join('; '),
+    },
+  ];
+}
 
 const nextConfig: NextConfig = {
   output: 'standalone',
@@ -60,7 +73,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/:path*',
-        headers: securityHeaders,
+        headers: buildSecurityHeaders(),
       },
     ];
   },
