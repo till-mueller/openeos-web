@@ -1904,6 +1904,28 @@ export const dsfinvkApi = {
     const filename = match?.[1] || `dsfinvk-export-${eventId}-${deviceId}.zip`;
     return { blob: await res.blob(), filename };
   },
+
+  /** Every till used in this event, bundled into one outer ZIP — same
+   *  per-till export/Z_NR allocation underneath, just looped server-side
+   *  so this is one click instead of one per till. */
+  exportEventData: async (
+    organizationId: string,
+    eventId: string
+  ): Promise<{ blob: Blob; filename: string }> => {
+    const url = `${API_URL}/organizations/${organizationId}/dsfinvk/events/${eventId}/export`;
+    const token = apiClient.getAccessToken();
+    const res = await fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      throw new Error(`DSFinV-K-Export fehlgeschlagen (${res.status})`);
+    }
+    const disposition = res.headers.get('content-disposition') || '';
+    const match = disposition.match(/filename="?([^";]+)"?/);
+    const filename = match?.[1] || `dsfinvk-export-${eventId}-alle-kassen.zip`;
+    return { blob: await res.blob(), filename };
+  },
 };
 
 // Setup API (Initial setup, no auth required)

@@ -7,6 +7,17 @@ import { useAuthStore } from '@/stores/auth-store';
 import { devicesApi, dsfinvkApi, eventsApi } from '@/lib/api-client';
 import { toast } from '@/components/shared/toast';
 
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 export function OrganizationDsfinvkExportSection() {
   const t = useTranslations('settings.organizationDsfinvk');
   const { currentOrganization } = useAuthStore();
@@ -39,14 +50,18 @@ export function OrganizationDsfinvkExportSection() {
     mutationFn: async () => {
       if (!organizationId || !eventId || !deviceId) throw new Error('Missing event or device');
       const { blob, filename } = await dsfinvkApi.exportData(organizationId, eventId, deviceId);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+      downloadBlob(blob, filename);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('failed'));
+    },
+  });
+
+  const exportAllMutation = useMutation({
+    mutationFn: async () => {
+      if (!organizationId || !eventId) throw new Error('Missing event');
+      const { blob, filename } = await dsfinvkApi.exportEventData(organizationId, eventId);
+      downloadBlob(blob, filename);
     },
     onError: (error: Error) => {
       toast.error(error.message || t('failed'));
@@ -75,30 +90,54 @@ export function OrganizationDsfinvkExportSection() {
           </select>
         </div>
 
-        <div className="auth-field">
-          <label className="auth-field__label" htmlFor="dsfinvkDevice">{t('device')}</label>
-          <select id="dsfinvkDevice" className="input" value={deviceId} onChange={(e) => setDeviceId(e.target.value)}>
-            <option value="">{t('selectDevice')}</option>
-            {(devicesQuery.data || []).map((d) => (
-              <option key={d.id} value={d.id}>{d.name}</option>
-            ))}
-          </select>
-        </div>
-
         <div>
           <button
             type="button"
             className="btn btn--primary"
-            onClick={() => exportMutation.mutate()}
-            disabled={!eventId || !deviceId || exportMutation.isPending}
+            onClick={() => exportAllMutation.mutate()}
+            disabled={!eventId || exportAllMutation.isPending}
           >
-            {exportMutation.isPending ? (
+            {exportAllMutation.isPending ? (
               <>
                 <span style={{ display: 'inline-block', width: 14, height: 14, borderRadius: '50%', border: '2px solid currentColor', borderTopColor: 'transparent', animation: 'spin 0.75s linear infinite' }} />
                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
               </>
-            ) : t('download')}
+            ) : t('downloadAll')}
           </button>
+          <p style={{ fontSize: 12, color: 'color-mix(in oklab, var(--ink) 50%, transparent)', marginTop: 6 }}>
+            {t('downloadAllHint')}
+          </p>
+        </div>
+
+        <div style={{ paddingTop: 12, borderTop: '1px solid color-mix(in oklab, var(--ink) 6%, transparent)' }}>
+          <p style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{t('singleTillTitle')}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="auth-field">
+              <label className="auth-field__label" htmlFor="dsfinvkDevice">{t('device')}</label>
+              <select id="dsfinvkDevice" className="input" value={deviceId} onChange={(e) => setDeviceId(e.target.value)}>
+                <option value="">{t('selectDevice')}</option>
+                {(devicesQuery.data || []).map((d) => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <button
+                type="button"
+                className="btn btn--ghost"
+                onClick={() => exportMutation.mutate()}
+                disabled={!eventId || !deviceId || exportMutation.isPending}
+              >
+                {exportMutation.isPending ? (
+                  <>
+                    <span style={{ display: 'inline-block', width: 14, height: 14, borderRadius: '50%', border: '2px solid currentColor', borderTopColor: 'transparent', animation: 'spin 0.75s linear infinite' }} />
+                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                  </>
+                ) : t('download')}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
