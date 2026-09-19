@@ -21,6 +21,7 @@ interface PosCartProps {
   tableNumber?: string;
   orderingMode?: 'immediate' | 'tab';
   onOpenTabs?: () => void;
+  currentUserId?: string;
 }
 
 function formatPrice(price: number): string {
@@ -52,6 +53,7 @@ export function PosCart({
   tableNumber: sessionTableNumber,
   orderingMode = 'immediate',
   onOpenTabs,
+  currentUserId,
 }: PosCartProps) {
   const t = useTranslations('pos');
   const queryClient = useQueryClient();
@@ -167,6 +169,7 @@ export function PosCart({
         source: 'pos',
         fulfillmentType,
         items: buildOrderItems(),
+        userId: currentUserId,
         ...(discount > 0 ? { discountAmount: discount, discountReason } : {}),
         ...(tip > 0 ? { tipAmount: tip } : {}),
       });
@@ -189,6 +192,9 @@ export function PosCart({
       queryClient.invalidateQueries({ queryKey: ['device-open-tabs'] });
       setLastOrderNumber(order.orderNumber || order.dailyNumber?.toString());
       notifyCustomerDisplayOrderCompleted('paid', order.orderNumber || order.dailyNumber?.toString() || null);
+      // Close the cash sheet in the same state batch as the cart clear, so the
+      // background can never visibly settle while the modal is still up.
+      setShowCashModal(false);
       clearCart();
       setBewirtungsbelegRequested(false);
       setTimeout(() => setLastOrderNumber(null), 5000);
@@ -204,6 +210,7 @@ export function PosCart({
         source: 'pos',
         fulfillmentType,
         items: buildOrderItems(),
+        userId: currentUserId,
         ...(discount > 0 ? { discountAmount: discount, discountReason } : {}),
       });
       return orderResponse.data;
@@ -223,7 +230,6 @@ export function PosCart({
     setIsProcessing(true);
     try {
       await createOrderWithPayment.mutateAsync({ paymentMethod, tip });
-      setShowCashModal(false);
     } catch (error) {
       console.error('Order failed:', error);
     } finally {

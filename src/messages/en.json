@@ -1752,7 +1752,11 @@
       "orders": "{count, plural, =1 {order} other {orders}}",
       "payCash": "Cash",
       "payCard": "Card",
-      "splitBill": "Split bill"
+      "splitBill": "Split bill",
+      "selectAll": "Select all",
+      "selectHint": "Select table(s) to pay",
+      "selectedTables": "{count, plural, =1 {1 table selected} other {# tables selected}}",
+      "selectedTotal": "Selected"
     },
     "splitPayment": {
       "title": "Split bill",

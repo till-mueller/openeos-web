@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Clock, Coins01, LogOut01, Power01 } from '@untitledui/icons';
+import { Clock, Coins01, LogOut01, Power01, Receipt } from '@untitledui/icons';
 import { useDeviceStore, useDeviceHydration } from '@/stores/device-store';
 import { useCartStore } from '@/stores/cart-store';
 import { useDeviceSocket, type BroadcastMessage } from '@/hooks/use-device-socket';
@@ -649,6 +649,16 @@ export default function DevicePosPage() {
           <div className="pos-mobile-hide" style={{ width: 1, height: 24, background: 'var(--pos-line)' }} />
           <button
             type="button"
+            onClick={() => setIsOpenTabsOpen(true)}
+            className="pos-mobile-hide"
+            style={{ ...topBtnStyle, display: 'flex', alignItems: 'center', gap: 6 }}
+            title={t('openTabs.title')}
+          >
+            <Receipt style={{ width: 16, height: 16 }} />
+            <span>{t('openTabs.title')}</span>
+          </button>
+          <button
+            type="button"
             onClick={() => setIsOrderHistoryOpen(true)}
             className="pos-mobile-hide"
             style={topBtnStyle}
@@ -705,6 +715,14 @@ export default function DevicePosPage() {
               style={{ position: 'fixed', inset: 0, zIndex: 25 }}
             />
             <div className="pos-overflow-menu pos-mobile-only" role="menu">
+              <button
+                type="button"
+                onClick={() => { setIsMobileMenuOpen(false); setIsOpenTabsOpen(true); }}
+                role="menuitem"
+              >
+                <Receipt style={{ width: 18, height: 18, color: 'var(--pos-ink-2)', flexShrink: 0 }} />
+                <span>{t('openTabs.title')}</span>
+              </button>
               <button
                 type="button"
                 onClick={() => { setIsMobileMenuOpen(false); setIsOrderHistoryOpen(true); }}
@@ -846,6 +864,7 @@ export default function DevicePosPage() {
             tableNumber={tableNumber}
             orderingMode={orderingMode}
             onOpenTabs={() => setIsOpenTabsOpen(true)}
+            currentUserId={authenticatedUser?.userId}
           />
         </div>
       </div>
@@ -952,6 +971,7 @@ export default function DevicePosPage() {
                 closeCart();
                 setIsOpenTabsOpen(true);
               }}
+              currentUserId={authenticatedUser?.userId}
             />
           </div>
         </div>
@@ -985,6 +1005,7 @@ export default function DevicePosPage() {
         isOpen={isOpenTabsOpen}
         onClose={() => setIsOpenTabsOpen(false)}
         onSplitPayment={() => setIsSplitPaymentOpen(true)}
+        currentUserId={authenticatedUser?.userId}
       />
       <OrderHistoryDrawer
         isOpen={isOrderHistoryOpen}
