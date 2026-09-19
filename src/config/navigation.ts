@@ -56,6 +56,14 @@ export const superAdminNavItems: NavItemType[] = [
     icon: Calendar,
   },
   {
+    // Reconciliation view against the platform's own fiskaly invoice --
+    // every reseller-eligible org, provider, activation source, live
+    // client count.
+    label: 'TSE-Clients',
+    href: '/admin/tse',
+    icon: Shield01,
+  },
+  {
     // Nicht schlicht "Support": der Fusseintrag heisst schon so und
     // fuehrt zum eigenen Chat mit dem Support. Hier geht es um den
     // Posteingang aller Organisationen — beides nebeneinander in der

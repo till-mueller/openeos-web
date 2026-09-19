@@ -103,3 +103,12 @@ export interface CustomerImportResult {
   organizationSlug?: string;
   error?: string;
 }
+
+export interface AdminTseClientSummary {
+  organizationId: string;
+  organizationName: string;
+  provider: 'fiskaly' | 'local' | 'none';
+  reseller: boolean;
+  activatedAt: string | null;
+  clientCount: number;
+}

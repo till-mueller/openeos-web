@@ -1060,6 +1060,10 @@ export const adminApi = {
 
   updateNotificationSettings: (data: Partial<import('@/types/admin').AdminNotificationSettings>) =>
     apiClient.patch<ApiResponse<import('@/types/admin').AdminNotificationSettings>>('/admin/settings/notifications', data),
+
+  // TSE (platform reseller reconciliation)
+  getTseClients: () =>
+    apiClient.get<ApiResponse<import('@/types/admin').AdminTseClientSummary[]>>('/admin/tse/clients'),
 };
 
 // Devices API
@@ -1875,6 +1879,20 @@ export const tseApi = {
     }
     return res.blob();
   },
+
+  /** Whether this deployment offers self-service platform-reseller TSE activation. */
+  resellerAvailable: (organizationId: string) =>
+    apiClient.get<ApiResponse<{ available: boolean }>>(
+      `/organizations/${organizationId}/tse/reseller-available`
+    ),
+
+  /** Self-service activation under the platform's fiskaly reseller account
+   *  -- no fiskaly account of the org's own required. */
+  activate: (organizationId: string, acknowledgedBetreiber: boolean) =>
+    apiClient.post<ApiResponse<{ ok: boolean; tssId?: string; message?: string }>>(
+      `/organizations/${organizationId}/tse/activate`,
+      { acknowledgedBetreiber }
+    ),
 };
 
 /** DSFinV-K compliance export: one till within one event, covering

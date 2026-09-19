@@ -50,14 +50,18 @@ export interface OrganizationSettings {
     enabled: boolean;
     provider: 'fiskaly' | 'local' | 'none';
     fiskaly?: {
-      apiKey: string;
-      apiSecret: string;
+      /** Blank for reseller-activated orgs -- the platform's own credential is never sent to the frontend. */
+      apiKey?: string;
+      apiSecret?: string;
       tssId: string;
     };
     /** Local/offline hardware TSE (e.g. Swissbit) attached to an on-prem printer-agent. */
     local?: {
       agentDeviceId: string;
     };
+    /** True when this TSS was provisioned via the platform's fiskaly reseller credential, not a bring-your-own account. */
+    reseller?: boolean;
+    activatedAt?: string;
   };
   orderFlow?: {
     receiptPrinting?: {

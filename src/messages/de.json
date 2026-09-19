@@ -648,6 +648,14 @@
     "organizationTse": {
       "title": "TSE",
       "description": "Technische Sicherheitseinrichtung (KassenSichV) — signiert jede Zahlung fiskalkonform.",
+      "activate": {
+        "title": "TSE ohne eigenes fiskaly-Konto aktivieren",
+        "description": "Nutzen Sie die TSE über openEOS — kein eigenes fiskaly-Konto nötig. Die Einrichtung übernimmt openEOS für Sie.",
+        "acknowledgeBetreiber": "Mir ist bewusst, dass meine Organisation als Betreiber der Kasse die vollständige gesetzliche Verantwortung für die Einhaltung der Kassensicherungsverordnung (KassenSichV) trägt.",
+        "action": "Aktivieren",
+        "success": "TSE erfolgreich aktiviert",
+        "failed": "Aktivierung fehlgeschlagen"
+      },
       "enabled": "TSE aktiviert",
       "provider": "Anbieter",
       "providerFiskaly": "fiskaly (Cloud)",
@@ -1648,6 +1656,26 @@
       "input": {
         "placeholder": "Antwort schreiben…",
         "send": "Senden"
+      }
+    },
+    "tse": {
+      "title": "TSE-Clients",
+      "description": "Aktive fiskaly-Clients je Organisation — zum Abgleich mit der eigenen fiskaly-Rechnung.",
+      "totalClients": "{count} aktive Clients insgesamt",
+      "columns": {
+        "organization": "Organisation",
+        "provider": "Anbieter",
+        "source": "Quelle",
+        "activatedAt": "Aktiviert am",
+        "clients": "Clients"
+      },
+      "source": {
+        "reseller": "Plattform-Reseller",
+        "ownAccount": "Eigenes fiskaly-Konto"
+      },
+      "empty": {
+        "title": "Keine TSE-Clients",
+        "description": "Noch keine Organisation hat TSE aktiviert."
       }
     }
   },

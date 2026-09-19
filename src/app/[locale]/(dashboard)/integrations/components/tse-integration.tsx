@@ -122,6 +122,56 @@ export function TseIntegration() {
     },
   });
 
+  // Platform reseller activation
+  const [acknowledgedBetreiber, setAcknowledgedBetreiber] = useState(false);
+
+  const resellerAvailableQuery = useQuery({
+    queryKey: ['tse-reseller-available', organizationId],
+    queryFn: async () => {
+      if (!organizationId) return false;
+      const response = await tseApi.resellerAvailable(organizationId);
+      return response.data?.available ?? false;
+    },
+    enabled: !!organizationId && !tseSettings?.enabled,
+  });
+
+  const activatePlatform = useMutation({
+    mutationFn: async () => {
+      if (!currentOrganization) throw new Error('No organization');
+      const response = await tseApi.activate(currentOrganization.organizationId, acknowledgedBetreiber);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (!data.ok || !data.tssId) {
+        toast.error(data.message || t('activate.failed'));
+        return;
+      }
+      // Mirrors createTss's onSuccess: the backend already persisted
+      // enabled/provider/reseller/activatedAt -- reflect that locally so
+      // the rest of this card (test connection, export) unlocks without a
+      // reload. apiKey/apiSecret are deliberately never sent back by the
+      // platform-activation endpoint (see TseService.provisionTss) --
+      // reseller orgs never receive the platform's own credential.
+      if (currentOrganization?.organization) {
+        setCurrentOrganization({
+          ...currentOrganization,
+          organization: {
+            ...currentOrganization.organization,
+            settings: {
+              ...currentOrganization.organization.settings,
+              tse: { enabled: true, provider: 'fiskaly', reseller: true, fiskaly: { tssId: data.tssId } },
+            },
+          } as unknown as typeof currentOrganization.organization,
+        });
+      }
+      toast.success(data.message || t('activate.success'));
+      queryClient.invalidateQueries({ queryKey: ['organizations'] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('activate.failed'));
+    },
+  });
+
   const testConnection = useMutation({
     mutationFn: async () => {
       if (!currentOrganization) throw new Error('No organization');
@@ -190,6 +240,45 @@ export function TseIntegration() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      {!isConfigured && resellerAvailableQuery.data === true && (
+        <div className="app-card">
+          <div style={{ marginBottom: 16 }}>
+            <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>{t('activate.title')}</h3>
+            <p style={{ fontSize: 13, color: 'color-mix(in oklab, var(--ink) 50%, transparent)' }}>
+              {t('activate.description')}
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13 }}>
+              <input
+                type="checkbox"
+                checked={acknowledgedBetreiber}
+                onChange={(e) => setAcknowledgedBetreiber(e.target.checked)}
+                style={{ marginTop: 2 }}
+              />
+              {t('activate.acknowledgeBetreiber')}
+            </label>
+
+            <div>
+              <button
+                type="button"
+                className="btn btn--primary"
+                onClick={() => activatePlatform.mutate()}
+                disabled={!acknowledgedBetreiber || activatePlatform.isPending}
+              >
+                {activatePlatform.isPending ? (
+                  <>
+                    <span style={{ display: 'inline-block', width: 14, height: 14, borderRadius: '50%', border: '2px solid currentColor', borderTopColor: 'transparent', animation: 'spin 0.75s linear infinite' }} />
+                    <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                  </>
+                ) : t('activate.action')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="app-card">
         <div style={{ marginBottom: 20 }}>
           <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>{t('title')}</h3>

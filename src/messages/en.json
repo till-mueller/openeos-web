@@ -648,6 +648,14 @@
     "organizationTse": {
       "title": "TSE",
       "description": "Technical security device (KassenSichV, German fiscalization law) — signs every payment for compliance.",
+      "activate": {
+        "title": "Activate TSE without your own fiskaly account",
+        "description": "Use TSE through openEOS — no fiskaly account of your own needed. openEOS handles the setup for you.",
+        "acknowledgeBetreiber": "I understand that my organization, as the operator (Betreiber) of the till, carries full statutory responsibility for complying with the German cash register security regulation (KassenSichV).",
+        "action": "Activate",
+        "success": "TSE activated successfully",
+        "failed": "Activation failed"
+      },
       "enabled": "TSE enabled",
       "provider": "Provider",
       "providerFiskaly": "fiskaly (Cloud)",
@@ -929,6 +937,26 @@
       "input": {
         "placeholder": "Write a reply…",
         "send": "Send"
+      }
+    },
+    "tse": {
+      "title": "TSE Clients",
+      "description": "Active fiskaly clients per organization — for reconciling against your own fiskaly invoice.",
+      "totalClients": "{count} active clients total",
+      "columns": {
+        "organization": "Organization",
+        "provider": "Provider",
+        "source": "Source",
+        "activatedAt": "Activated on",
+        "clients": "Clients"
+      },
+      "source": {
+        "reseller": "Platform reseller",
+        "ownAccount": "Own fiskaly account"
+      },
+      "empty": {
+        "title": "No TSE clients",
+        "description": "No organization has activated TSE yet."
       }
     }
   },
