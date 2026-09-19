@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 
 import { IntegrationLogo } from './integration-logo';
 import { SumUpIntegration } from './sumup-integration';
+import { TseIntegration } from './tse-integration';
 
 /**
  * Verfügbare Integrationen.
@@ -50,12 +51,13 @@ export function IntegrationsContainer() {
       available: false,
     },
     {
-      id: 'fiskaly',
-      name: 'fiskaly',
-      vendor: t('fiskaly.vendor'),
-      description: t('fiskaly.description'),
+      id: 'tse',
+      name: 'TSE',
+      vendor: t('tse.vendor'),
+      description: t('tse.description'),
       color: '#0F766E',
-      available: false,
+      available: true,
+      panel: <TseIntegration />,
     },
   ];
 

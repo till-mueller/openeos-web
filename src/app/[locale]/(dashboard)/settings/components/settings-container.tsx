@@ -10,9 +10,6 @@ import { OrganizationGeneralSection } from './organization-general-section';
 import { OrganizationContactSection } from './organization-contact-section';
 import { OrganizationBillingSection } from './organization-billing-section';
 import { OrganizationPosSection } from './organization-pos-section';
-import { OrganizationSumupSection } from './organization-sumup-section';
-import { OrganizationTseSection } from './organization-tse-section';
-import { OrganizationDsfinvkExportSection } from './organization-dsfinvk-export-section';
 import { PlatformNotificationsSection } from './platform-notifications-section';
 import { useAuthStore } from '@/stores/auth-store';
 
@@ -68,9 +65,6 @@ export function SettingsContainer() {
     { id: 'org-contact', label: t('organizationContact.title'), children: <OrganizationContactSection /> },
     { id: 'org-billing', label: t('organizationBilling.title'), children: <OrganizationBillingSection /> },
     { id: 'org-pos', label: t('organizationPos.title'), children: <OrganizationPosSection /> },
-    { id: 'org-sumup', label: t('organizationSumup.title'), children: <OrganizationSumupSection /> },
-    { id: 'org-tse', label: t('organizationTse.title'), children: <OrganizationTseSection /> },
-    { id: 'org-dsfinvk', label: t('organizationDsfinvk.title'), children: <OrganizationDsfinvkExportSection /> },
   ];
 
   return (

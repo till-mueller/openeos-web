@@ -18,7 +18,7 @@ function downloadBlob(blob: Blob, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-export function OrganizationDsfinvkExportSection() {
+export function DsfinvkExportContainer() {
   const t = useTranslations('settings.organizationDsfinvk');
   const { currentOrganization } = useAuthStore();
   const organizationId = currentOrganization?.organizationId;

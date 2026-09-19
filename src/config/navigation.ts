@@ -13,6 +13,7 @@ import {
   Settings01,
   Coins01,
   ShoppingBag01,
+  Shield01,
   Tablet02,
   PuzzlePiece01,
   ReceiptCheck,
@@ -146,6 +147,14 @@ export const dashboardNavItems: (NavItemType | NavItemDividerType)[] = [
     href: '/reports',
     icon: LineChartUp01,
     requiredPermission: 'reports',
+  },
+  {
+    // Fiskal-Exportbelege fuer eine Betriebspruefung — dasselbe Argument
+    // wie bei Rechnungen: Mitglieder haben darin nichts zu suchen.
+    label: 'DSFinV-K-Export',
+    href: '/dsfinvk-export',
+    icon: Shield01,
+    adminOnly: true,
   },
   {
     // Abrechnungsdaten der Organisation — es gibt kein Berechtigungsmodul

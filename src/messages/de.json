@@ -2602,6 +2602,10 @@
       }
     }
   },
+  "dsfinvkExport": {
+    "title": "DSFinV-K-Export",
+    "subtitle": "Strukturierter DSFinV-K-Export für eine Betriebsprüfung oder die Endabrechnung nach der Veranstaltung."
+  },
   "reports": {
     "title": "Auswertung",
     "subtitle": "Umsatz, Bestellungen und Produktanalysen im Überblick",
@@ -2841,9 +2845,9 @@
       "vendor": "Kartenzahlung",
       "description": "Zahlungen im Online-Shop über Stripe abwickeln."
     },
-    "fiskaly": {
+    "tse": {
       "vendor": "Kassensicherung",
-      "description": "Technische Sicherheitseinrichtung (TSE) nach Kassensicherungsverordnung."
+      "description": "Technische Sicherheitseinrichtung (TSE) nach Kassensicherungsverordnung – fiskaly (Cloud) oder lokale Hardware."
     }
   }
 }

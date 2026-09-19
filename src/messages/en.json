@@ -2602,6 +2602,10 @@
       }
     }
   },
+  "dsfinvkExport": {
+    "title": "DSFinV-K export",
+    "subtitle": "Structured DSFinV-K export for a tax audit or the closing report after the event."
+  },
   "reports": {
     "title": "Reports",
     "subtitle": "Revenue, orders and product analytics at a glance",
@@ -2841,9 +2845,9 @@
       "vendor": "Card payments",
       "description": "Take online shop payments through Stripe."
     },
-    "fiskaly": {
+    "tse": {
       "vendor": "Fiscalisation",
-      "description": "Cloud TSE for the German cash register security regulation."
+      "description": "Technical Security Device (TSE) for the German cash register security regulation – fiskaly (cloud) or local hardware."
     }
   }
 }

@@ -9,7 +9,7 @@ import { toast } from '@/components/shared/toast';
 
 type TseProvider = 'fiskaly' | 'local';
 
-export function OrganizationTseSection() {
+export function TseIntegration() {
   const t = useTranslations('settings.organizationTse');
   const tCommon = useTranslations('common');
   const { currentOrganization, setCurrentOrganization } = useAuthStore();
