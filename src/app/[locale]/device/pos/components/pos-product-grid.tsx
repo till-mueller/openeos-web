@@ -21,8 +21,11 @@ export function PosProductGrid({ products }: PosProductGridProps) {
   const { addItem } = useCartStore();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
+  const hasConfiguredOptions = (product: Product) =>
+    !!product.options?.groups?.some((g) => g.options.length > 0);
+
   const handleProductClick = (product: Product) => {
-    if (product.options?.groups && product.options.groups.length > 0) {
+    if (hasConfiguredOptions(product)) {
       setSelectedProduct(product);
     } else {
       addItem(product, 1, []);
@@ -154,7 +157,7 @@ export function PosProductGrid({ products }: PosProductGridProps) {
                     {product.description}
                   </div>
                 )}
-                {product.options?.groups && product.options.groups.length > 0 && (
+                {hasConfiguredOptions(product) && (
                   <div style={{ fontSize: 10, color: 'var(--pos-accent-ink)', fontWeight: 500 }}>
                     + Optionen
                   </div>

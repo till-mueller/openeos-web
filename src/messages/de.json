@@ -1752,7 +1752,11 @@
       "orders": "{count, plural, =1 {Bestellung} other {Bestellungen}}",
       "payCash": "Bar",
       "payCard": "Karte",
-      "splitBill": "Rechnung splitten"
+      "splitBill": "Rechnung splitten",
+      "selectAll": "Alle auswählen",
+      "selectHint": "Tisch(e) zum Bezahlen auswählen",
+      "selectedTables": "{count, plural, =1 {1 Tisch ausgewählt} other {# Tische ausgewählt}}",
+      "selectedTotal": "Ausgewählt"
     },
     "splitPayment": {
       "title": "Rechnung splitten",

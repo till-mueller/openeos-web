@@ -1322,9 +1322,11 @@ export const deviceApi = {
     ),
 
   // Get open orders (unpaid/partly paid)
-  getOpenOrders: () =>
+  getOpenOrders: (userId?: string) =>
     apiClient.get<ApiResponse<import('@/types/order').Order[]>>(
-      '/device-api/orders/open',
+      userId
+        ? `/device-api/orders/open?userId=${encodeURIComponent(userId)}`
+        : '/device-api/orders/open',
       { useDeviceAuth: true }
     ),
 

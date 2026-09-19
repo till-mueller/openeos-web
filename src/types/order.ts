@@ -142,6 +142,7 @@ export interface CreateOrderData {
   items?: CreateOrderItemData[];
   discountAmount?: number;
   discountReason?: string;
+  userId?: string;
 }
 
 export interface UpdateOrderData {
