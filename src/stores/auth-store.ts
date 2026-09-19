@@ -8,6 +8,17 @@ interface AuthState {
   user: User | null;
   organizations: UserOrganization[];
   currentOrganization: UserOrganization | null;
+  /**
+   * Which sidebar/nav a superadmin-who-is-also-a-club-member currently
+   * sees. Deliberately independent of currentOrganization -- that field
+   * gets auto-reconciled to organizations[0] by setOrganizations whenever
+   * it's null/stale (see that action's own comment), so using
+   * "currentOrganization === null" as the platform-mode signal would get
+   * silently overridden on the next org refetch. Meaningless for a
+   * non-superadmin (always sees club nav) or a superadmin with no club
+   * memberships (always sees platform nav); only matters for the overlap.
+   */
+  platformViewActive: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
 
@@ -15,6 +26,7 @@ interface AuthState {
   setUser: (user: User | null) => void;
   setOrganizations: (organizations: UserOrganization[]) => void;
   setCurrentOrganization: (organization: UserOrganization | null) => void;
+  setPlatformViewActive: (active: boolean) => void;
   setLoading: (isLoading: boolean) => void;
   logout: () => Promise<void>;
   reset: () => void;
@@ -24,6 +36,7 @@ const initialState = {
   user: null,
   organizations: [],
   currentOrganization: null,
+  platformViewActive: true,
   isAuthenticated: false,
   isLoading: true,
 };
@@ -58,6 +71,8 @@ export const useAuthStore = create<AuthState>()(
           currentOrganization: organization,
         }),
 
+      setPlatformViewActive: (active) => set({ platformViewActive: active }),
+
       setLoading: (isLoading) => set({ isLoading }),
 
       logout: async () => {
@@ -86,6 +101,7 @@ export const useAuthStore = create<AuthState>()(
       name: 'openeos-auth',
       partialize: (state) => ({
         currentOrganization: state.currentOrganization,
+        platformViewActive: state.platformViewActive,
       }),
     }
   )

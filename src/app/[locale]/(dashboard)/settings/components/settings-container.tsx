@@ -47,8 +47,11 @@ function TabBar({
 
 export function SettingsContainer() {
   const t = useTranslations('settings');
-  const { currentOrganization, user } = useAuthStore();
+  const { currentOrganization, user, platformViewActive } = useAuthStore();
   const isSuperAdmin = user?.isSuperAdmin ?? false;
+  // See app-sidebar.tsx's showPlatformNav for why this uses platformViewActive
+  // (persisted, explicit toggle) rather than currentOrganization/isSuperAdmin alone.
+  const showPlatformNav = isSuperAdmin && platformViewActive;
   const [activeMain, setActiveMain] = useState<'personal' | 'organization' | 'platform'>('personal');
   const [activePersonal, setActivePersonal] = useState('profile');
   const [activeOrg, setActiveOrg] = useState('org-general');
@@ -72,7 +75,7 @@ export function SettingsContainer() {
       {/* Main tabs: Personal / Organization (or Personal / Platform for super-admins) */}
       <TabBar
         tabs={
-          isSuperAdmin
+          showPlatformNav
             ? [
                 { id: 'personal', label: t('tabs.personal') },
                 { id: 'platform', label: t('tabs.platform') },
@@ -96,7 +99,7 @@ export function SettingsContainer() {
       )}
 
       {/* Organization settings */}
-      {activeMain === 'organization' && !isSuperAdmin && (
+      {activeMain === 'organization' && !showPlatformNav && (
         <>
           {currentOrganization ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
@@ -114,7 +117,7 @@ export function SettingsContainer() {
       )}
 
       {/* Platform settings (super-admin only) */}
-      {activeMain === 'platform' && isSuperAdmin && <PlatformNotificationsSection />}
+      {activeMain === 'platform' && showPlatformNav && <PlatformNotificationsSection />}
     </div>
   );
 }

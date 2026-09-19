@@ -11,6 +11,7 @@ import {
   LogOut01,
   Mail01,
   Plus,
+  Shield01,
 } from '@untitledui/icons';
 
 import { CreateOrgModal } from './create-org-modal';
@@ -49,6 +50,8 @@ export function AppSidebar() {
     organizations,
     currentOrganization,
     setCurrentOrganization,
+    platformViewActive,
+    setPlatformViewActive,
     setOrganizations,
     logout,
     isLoading,
@@ -93,6 +96,12 @@ export function AppSidebar() {
   const isSuperAdmin = user?.isSuperAdmin ?? false;
   const currentRole = currentOrganization?.role;
   const currentPermissions = currentOrganization?.permissions;
+  // A superadmin who is also a club member can switch between the platform
+  // nav and their club's nav via the org-switcher below; anyone else's nav
+  // is unaffected by platformViewActive (irrelevant when isSuperAdmin is
+  // false, and a superadmin with no club memberships has nothing to switch
+  // into anyway).
+  const showPlatformNav = isSuperAdmin && platformViewActive;
 
   const canSeeNavItem = (item: NavItemType | NavItemDividerType): boolean => {
     if (item.adminOnly) return currentRole === 'admin';
@@ -111,10 +120,10 @@ export function AppSidebar() {
       return hasItemBefore && hasItemAfter && !nextIsDivider;
     });
 
-  const navItems = isSuperAdmin
+  const navItems = showPlatformNav
     ? superAdminNavItems
     : stripOrphanedDividers(dashboardNavItems.filter(canSeeNavItem));
-  const filteredFooterItems = isSuperAdmin
+  const filteredFooterItems = showPlatformNav
     ? dashboardFooterItems.filter((item) => !item.adminOnly)
     : dashboardFooterItems.filter(canSeeNavItem);
 
@@ -192,22 +201,26 @@ export function AppSidebar() {
               aria-expanded={orgMenuOpen}
             >
               <div className="app-sidebar__org-avatar">
-                {orgs.length > 0 ? orgInitial : isSuperAdmin ? 'SA' : '?'}
+                {showPlatformNav ? 'SA' : orgs.length > 0 ? orgInitial : isSuperAdmin ? 'SA' : '?'}
               </div>
               <div style={{ minWidth: 0, flex: 1 }}>
                 <div className="app-sidebar__org-name">
-                  {orgs.length > 0
-                    ? (currentOrganization?.organization?.name ?? '— Organisation wählen —')
-                    : isSuperAdmin
-                      ? 'Super-Admin'
-                      : 'Keine Organisation'}
+                  {showPlatformNav
+                    ? 'Super-Admin'
+                    : orgs.length > 0
+                      ? (currentOrganization?.organization?.name ?? '— Organisation wählen —')
+                      : isSuperAdmin
+                        ? 'Super-Admin'
+                        : 'Keine Organisation'}
                 </div>
                 <div className="app-sidebar__org-role">
-                  {orgs.length > 0
-                    ? (currentRole ? (roleLabels[currentRole] ?? currentRole) : '')
-                    : isSuperAdmin
-                      ? 'Plattform-Verwaltung'
-                      : 'Tippe zum Erstellen'}
+                  {showPlatformNav
+                    ? 'Plattform-Verwaltung'
+                    : orgs.length > 0
+                      ? (currentRole ? (roleLabels[currentRole] ?? currentRole) : '')
+                      : isSuperAdmin
+                        ? 'Plattform-Verwaltung'
+                        : 'Tippe zum Erstellen'}
                 </div>
               </div>
               <ChevronDown className="app-sidebar__org-chev" />
@@ -230,6 +243,7 @@ export function AppSidebar() {
                       )}
                       onClick={() => {
                         setCurrentOrganization(o);
+                        setPlatformViewActive(false);
                         setOrgMenuOpen(false);
                       }}
                     >
@@ -249,7 +263,27 @@ export function AppSidebar() {
                     </button>
                   );
                 })}
-                {orgs.length > 0 && (
+                {isSuperAdmin && (
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={cx(
+                      'app-sidebar__org-menu-item',
+                      showPlatformNav && 'app-sidebar__org-menu-item--active',
+                    )}
+                    onClick={() => {
+                      setPlatformViewActive(true);
+                      setOrgMenuOpen(false);
+                    }}
+                  >
+                    <div className="app-sidebar__org-menu-avatar">
+                      <Shield01 style={{ width: 14, height: 14 }} />
+                    </div>
+                    <span style={{ flex: 1 }}>Plattform-Verwaltung</span>
+                    {showPlatformNav && <Check className="app-sidebar__org-menu-check" />}
+                  </button>
+                )}
+                {(orgs.length > 0 || isSuperAdmin) && (
                   <div
                     style={{
                       height: 1,
