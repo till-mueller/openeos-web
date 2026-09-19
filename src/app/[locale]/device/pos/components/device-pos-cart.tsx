@@ -3,7 +3,7 @@
 import { useState, type CSSProperties } from 'react';
 import { useTranslations } from 'next-intl';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Coins01, CreditCard01, Tag01, X } from '@untitledui/icons';
+import { CheckSquare, Coins01, CreditCard01, Receipt, Square, Tag01, X } from '@untitledui/icons';
 import { useCartStore, useCartHydration } from '@/stores/cart-store';
 import { notifyCustomerDisplayOrderCompleted } from '@/hooks/use-customer-display-broadcast';
 import { useDeviceStore } from '@/stores/device-store';
@@ -87,6 +87,7 @@ export function PosCart({
   const [showSumupModal, setShowSumupModal] = useState(false);
   const [showVoucherModal, setShowVoucherModal] = useState(false);
   const [showPfandReturnModal, setShowPfandReturnModal] = useState(false);
+  const [bewirtungsbelegRequested, setBewirtungsbelegRequested] = useState(false);
   const { settings } = useDeviceStore();
   const hasSumupReader = !!settings?.sumupReaderId;
   // Unset serviceMode means table service — same default as the POS page and the API
@@ -178,6 +179,7 @@ export function PosCart({
           orderId: order.id,
           amount: payableTotal + tip,
           paymentMethod,
+          ...(bewirtungsbelegRequested ? { bewirtungsbelegRequested: true } : {}),
         });
       }
       return order;
@@ -188,6 +190,7 @@ export function PosCart({
       setLastOrderNumber(order.orderNumber || order.dailyNumber?.toString());
       notifyCustomerDisplayOrderCompleted('paid', order.orderNumber || order.dailyNumber?.toString() || null);
       clearCart();
+      setBewirtungsbelegRequested(false);
       setTimeout(() => setLastOrderNumber(null), 5000);
     },
   });
@@ -750,6 +753,38 @@ export function PosCart({
             </span>
             <span className="pos-mono" style={{ fontSize: 16 }}>{Math.abs(netPfandUnits)}</span>
           </div>
+        )}
+
+        {/* Bewirtungsbeleg toggle -- only meaningful for an immediate payment
+            (a tab's payment happens later, via a different flow), and only
+            when there's actually something to pay. */}
+        {orderingMode === 'immediate' && payableTotal > 0 && (
+          <button
+            type="button"
+            onClick={() => setBewirtungsbelegRequested((v) => !v)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '8px 10px',
+              background: bewirtungsbelegRequested ? 'var(--pos-accent-soft)' : 'transparent',
+              border: `1px solid ${bewirtungsbelegRequested ? 'var(--pos-accent-ink)' : 'var(--pos-line-strong)'}`,
+              borderRadius: 'var(--pos-r-sm)',
+              fontSize: 12,
+              fontWeight: 600,
+              color: bewirtungsbelegRequested ? 'var(--pos-accent-ink)' : 'var(--pos-ink-2)',
+              cursor: 'pointer',
+              textAlign: 'left',
+            }}
+          >
+            {bewirtungsbelegRequested ? (
+              <CheckSquare style={{ width: 16, height: 16, flexShrink: 0 }} />
+            ) : (
+              <Square style={{ width: 16, height: 16, flexShrink: 0 }} />
+            )}
+            <Receipt style={{ width: 14, height: 14, flexShrink: 0 }} />
+            {t('cart.bewirtungsbeleg')}
+          </button>
         )}
 
         {/* Action buttons */}

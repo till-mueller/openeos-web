@@ -869,6 +869,27 @@ export const paymentsApi = {
       `/organizations/${organizationId}/payments/${paymentId}/receipt/email`,
       { email }
     ),
+
+  /** Same receipt, plus an appended blank-lines Bewirtungsbeleg section (§ 4 Abs. 5 Nr. 2 EStG)
+   *  to fill in and sign by hand. Available for any order, not just ones flagged at checkout. */
+  getBewirtungsbelegPdf: async (organizationId: string, paymentId: string): Promise<Blob> => {
+    const url = `${API_URL}/organizations/${organizationId}/payments/${paymentId}/bewirtungsbeleg`;
+    const token = apiClient.getAccessToken();
+    const res = await fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      throw new Error(`Bewirtungsbeleg konnte nicht geladen werden (${res.status})`);
+    }
+    return res.blob();
+  },
+
+  emailBewirtungsbeleg: (organizationId: string, paymentId: string, email: string) =>
+    apiClient.post<ApiResponse<{ ok: boolean; message?: string }>>(
+      `/organizations/${organizationId}/payments/${paymentId}/bewirtungsbeleg/email`,
+      { email }
+    ),
 };
 
 // Admin API (Super-Admin only)

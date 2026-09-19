@@ -56,6 +56,7 @@ export interface CreatePaymentData {
   paymentMethod: PaymentMethod;
   providerTransactionId?: string;
   metadata?: Record<string, unknown>;
+  bewirtungsbelegRequested?: boolean;
 }
 
 export interface SplitPaymentItemData {

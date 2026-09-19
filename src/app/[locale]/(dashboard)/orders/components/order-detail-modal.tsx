@@ -195,21 +195,31 @@ function ItemRow({ item, refillLabel }: { item: OrderItem; refillLabel: string }
 
 function PaymentReceiptRow({ payment, organizationId }: { payment: Payment; organizationId: string }) {
   const t = useTranslations();
-  const [showEmailInput, setShowEmailInput] = useState(false);
+  // Which document the open email-input row (if any) is composing for --
+  // one shared input instead of two separate toggle states.
+  const [emailMode, setEmailMode] = useState<'receipt' | 'bewirtungsbeleg' | null>(null);
   const [email, setEmail] = useState('');
 
-  const viewReceipt = useMutation({
-    mutationFn: async () => {
-      const blob = await paymentsApi.getReceiptPdf(organizationId, payment.id);
+  const openBlob = async (fetchBlob: () => Promise<Blob>, failedMessage: string) => {
+    try {
+      const blob = await fetchBlob();
       const url = URL.createObjectURL(blob);
       window.open(url, '_blank');
       // Revoke after a delay rather than immediately — the new tab needs
       // time to actually load the blob URL before it's freed.
       setTimeout(() => URL.revokeObjectURL(url), 30000);
-    },
-    onError: (error: Error) => {
-      toast.error(error.message || t('orders.detail.receiptFailed'));
-    },
+    } catch (error) {
+      toast.error((error as Error).message || failedMessage);
+    }
+  };
+
+  const viewReceipt = useMutation({
+    mutationFn: () => openBlob(() => paymentsApi.getReceiptPdf(organizationId, payment.id), t('orders.detail.receiptFailed')),
+  });
+
+  const viewBewirtungsbeleg = useMutation({
+    mutationFn: () =>
+      openBlob(() => paymentsApi.getBewirtungsbelegPdf(organizationId, payment.id), t('orders.detail.bewirtungsbelegFailed')),
   });
 
   const emailReceipt = useMutation({
@@ -220,7 +230,7 @@ function PaymentReceiptRow({ payment, organizationId }: { payment: Payment; orga
     onSuccess: (data) => {
       if (data.ok) {
         toast.success(t('orders.detail.receiptEmailSent', { email }));
-        setShowEmailInput(false);
+        setEmailMode(null);
         setEmail('');
       } else {
         toast.error(data.message || t('orders.detail.receiptFailed'));
@@ -231,13 +241,34 @@ function PaymentReceiptRow({ payment, organizationId }: { payment: Payment; orga
     },
   });
 
+  const emailBewirtungsbeleg = useMutation({
+    mutationFn: async () => {
+      const response = await paymentsApi.emailBewirtungsbeleg(organizationId, payment.id, email);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data.ok) {
+        toast.success(t('orders.detail.bewirtungsbelegEmailSent', { email }));
+        setEmailMode(null);
+        setEmail('');
+      } else {
+        toast.error(data.message || t('orders.detail.bewirtungsbelegFailed'));
+      }
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || t('orders.detail.bewirtungsbelegFailed'));
+    },
+  });
+
+  const activeEmailMutation = emailMode === 'bewirtungsbeleg' ? emailBewirtungsbeleg : emailReceipt;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 13 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 13, flexWrap: 'wrap' }}>
         <span>
           {formatCurrency(payment.amount)} · {t(`orders.paymentMethod.${payment.paymentMethod}`)}
         </span>
-        <div style={{ display: 'flex', gap: 6 }}>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
           <button
             type="button"
             className="btn btn--ghost btn--sm"
@@ -249,13 +280,28 @@ function PaymentReceiptRow({ payment, organizationId }: { payment: Payment; orga
           <button
             type="button"
             className="btn btn--ghost btn--sm"
-            onClick={() => setShowEmailInput((v) => !v)}
+            onClick={() => setEmailMode((m) => (m === 'receipt' ? null : 'receipt'))}
           >
             {t('orders.detail.emailReceipt')}
           </button>
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
+            onClick={() => viewBewirtungsbeleg.mutate()}
+            disabled={viewBewirtungsbeleg.isPending}
+          >
+            {t('orders.detail.viewBewirtungsbeleg')}
+          </button>
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
+            onClick={() => setEmailMode((m) => (m === 'bewirtungsbeleg' ? null : 'bewirtungsbeleg'))}
+          >
+            {t('orders.detail.emailBewirtungsbeleg')}
+          </button>
         </div>
       </div>
-      {showEmailInput && (
+      {emailMode && (
         <div style={{ display: 'flex', gap: 6 }}>
           <input
             type="email"
@@ -268,10 +314,10 @@ function PaymentReceiptRow({ payment, organizationId }: { payment: Payment; orga
           <button
             type="button"
             className="btn btn--primary btn--sm"
-            onClick={() => emailReceipt.mutate()}
-            disabled={!email || emailReceipt.isPending}
+            onClick={() => activeEmailMutation.mutate()}
+            disabled={!email || activeEmailMutation.isPending}
           >
-            {emailReceipt.isPending ? '…' : t('orders.detail.send')}
+            {activeEmailMutation.isPending ? '…' : t('orders.detail.send')}
           </button>
         </div>
       )}
