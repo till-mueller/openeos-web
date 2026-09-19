@@ -1877,6 +1877,35 @@ export const tseApi = {
   },
 };
 
+/** DSFinV-K compliance export: one till within one event, covering
+ *  everything since that till's last closing (or the event's start on the
+ *  first call). Safe to call again mid-event or at teardown — same
+ *  endpoint serves both. Fetched with the user's JWT and resolved to a
+ *  Blob, same pattern as tseApi.exportData. */
+export const dsfinvkApi = {
+  exportData: async (
+    organizationId: string,
+    eventId: string,
+    deviceId: string
+  ): Promise<{ blob: Blob; filename: string }> => {
+    const url = `${API_URL}/organizations/${organizationId}/dsfinvk/events/${eventId}/devices/${deviceId}/export`;
+    const token = apiClient.getAccessToken();
+    const res = await fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      throw new Error(`DSFinV-K-Export fehlgeschlagen (${res.status})`);
+    }
+    // Filename carries the real Z_NR-based name the server allocated —
+    // don't reconstruct it client-side, just read it back.
+    const disposition = res.headers.get('content-disposition') || '';
+    const match = disposition.match(/filename="?([^";]+)"?/);
+    const filename = match?.[1] || `dsfinvk-export-${eventId}-${deviceId}.zip`;
+    return { blob: await res.blob(), filename };
+  },
+};
+
 // Setup API (Initial setup, no auth required)
 export const setupApi = {
   // Check if setup is required

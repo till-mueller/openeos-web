@@ -686,6 +686,16 @@
         "failed": "Export fehlgeschlagen"
       }
     },
+    "organizationDsfinvk": {
+      "title": "DSFinV-K-Export",
+      "description": "Strukturierter DSFinV-K-Export für eine Kasse innerhalb eines Events — deckt alles seit dem letzten Export dieser Kasse ab. Beliebig oft aufrufbar: für die Übergabe am Ende der Veranstaltung oder für eine Betriebsprüfung während der Veranstaltung.",
+      "event": "Event",
+      "selectEvent": "Event auswählen",
+      "device": "Kasse",
+      "selectDevice": "Kasse auswählen",
+      "download": "Export herunterladen",
+      "failed": "Export fehlgeschlagen"
+    },
     "organizationNotifications": {
       "title": "Benachrichtigungen",
       "description": "E-Mail-Benachrichtigungen für Ihre Organisation",

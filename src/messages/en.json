@@ -686,6 +686,16 @@
         "failed": "Export failed"
       }
     },
+    "organizationDsfinvk": {
+      "title": "DSFinV-K export",
+      "description": "Structured DSFinV-K export for one till within one event — covers everything since that till's last export. Safe to call as often as needed: for handover at the end of the event, or for an audit (Betriebsprüfung) during the event.",
+      "event": "Event",
+      "selectEvent": "Select event",
+      "device": "Till",
+      "selectDevice": "Select till",
+      "download": "Download export",
+      "failed": "Export failed"
+    },
     "organizationNotifications": {
       "title": "Notifications",
       "description": "Email notifications for your organization",
