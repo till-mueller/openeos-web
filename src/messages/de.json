@@ -1676,6 +1676,22 @@
       "empty": {
         "title": "Keine TSE-Clients",
         "description": "Noch keine Organisation hat TSE aktiviert."
+      },
+      "credential": {
+        "title": "Fiskaly-Reseller-Zugangsdaten",
+        "description": "Ihr fiskaly-KUNDE-Konto, unter dem sich Organisationen ohne eigenes fiskaly-Konto selbst eine TSE aktivieren können. Verschlüsselt gespeichert.",
+        "configuredBadge": "Konfiguriert (Key endet auf {last4})",
+        "apiKey": "API-Key",
+        "apiKeyPlaceholder": "fiskaly API-Key",
+        "apiKeyPlaceholderConfigured": "Zum Ändern neuen Key eingeben",
+        "apiSecret": "API-Secret",
+        "apiSecretPlaceholder": "fiskaly API-Secret",
+        "apiSecretPlaceholderConfigured": "Zum Ändern neues Secret eingeben",
+        "clear": "Entfernen",
+        "saved": "Zugangsdaten gespeichert",
+        "saveFailed": "Speichern fehlgeschlagen",
+        "cleared": "Zugangsdaten entfernt",
+        "clearFailed": "Entfernen fehlgeschlagen"
       }
     }
   },

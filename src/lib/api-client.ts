@@ -1064,6 +1064,15 @@ export const adminApi = {
   // TSE (platform reseller reconciliation)
   getTseClients: () =>
     apiClient.get<ApiResponse<import('@/types/admin').AdminTseClientSummary[]>>('/admin/tse/clients'),
+
+  getFiskalyCredentialStatus: () =>
+    apiClient.get<ApiResponse<import('@/types/admin').AdminFiskalyCredentialStatus>>('/admin/settings/fiskaly'),
+
+  setFiskalyCredential: (apiKey: string, apiSecret: string) =>
+    apiClient.patch<ApiResponse<import('@/types/admin').AdminFiskalyCredentialStatus>>('/admin/settings/fiskaly', { apiKey, apiSecret }),
+
+  clearFiskalyCredential: () =>
+    apiClient.delete<ApiResponse<{ success: boolean }>>('/admin/settings/fiskaly'),
 };
 
 // Devices API

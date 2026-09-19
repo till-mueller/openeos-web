@@ -957,6 +957,22 @@
       "empty": {
         "title": "No TSE clients",
         "description": "No organization has activated TSE yet."
+      },
+      "credential": {
+        "title": "fiskaly reseller credentials",
+        "description": "Your fiskaly KUNDE account, under which organizations without their own fiskaly account can self-activate TSE. Stored encrypted.",
+        "configuredBadge": "Configured (key ends in {last4})",
+        "apiKey": "API key",
+        "apiKeyPlaceholder": "fiskaly API key",
+        "apiKeyPlaceholderConfigured": "Enter a new key to change it",
+        "apiSecret": "API secret",
+        "apiSecretPlaceholder": "fiskaly API secret",
+        "apiSecretPlaceholderConfigured": "Enter a new secret to change it",
+        "clear": "Remove",
+        "saved": "Credentials saved",
+        "saveFailed": "Failed to save",
+        "cleared": "Credentials removed",
+        "clearFailed": "Failed to remove"
       }
     }
   },

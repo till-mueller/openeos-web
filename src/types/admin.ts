@@ -112,3 +112,8 @@ export interface AdminTseClientSummary {
   activatedAt: string | null;
   clientCount: number;
 }
+
+export interface AdminFiskalyCredentialStatus {
+  configured: boolean;
+  apiKeyLast4: string | null;
+}
