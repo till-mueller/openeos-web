@@ -265,8 +265,13 @@ export function TseIntegration() {
                     id="tseTssId"
                     className="input"
                     value={tssId}
-                    readOnly
+                    disabled
                     placeholder={t('tssIdPlaceholder')}
+                    style={{
+                      background: 'color-mix(in oklab, var(--ink) 6%, transparent)',
+                      color: 'color-mix(in oklab, var(--ink) 45%, transparent)',
+                      cursor: 'not-allowed',
+                    }}
                   />
                   <p style={{ fontSize: 12, color: 'color-mix(in oklab, var(--ink) 50%, transparent)', marginTop: 4 }}>
                     {t('tssIdHint')}
@@ -364,9 +369,23 @@ export function TseIntegration() {
             {t('export.description')}
           </p>
           {isConfigured && tseSettings?.provider === 'fiskaly' && (
-            <p style={{ marginTop: 6 }}>
-              <span className="badge badge--warning" style={{ fontWeight: 400 }}>{t('export.fiskalyScopeWarning')}</span>
-            </p>
+            <div
+              style={{
+                marginTop: 10,
+                padding: 10,
+                borderRadius: 8,
+                background: 'color-mix(in oklab, var(--warn) 12%, transparent)',
+                display: 'flex',
+                gap: 10,
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" style={{ flexShrink: 0, marginTop: 1 }}>
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              <p style={{ fontSize: 13, color: 'var(--warn-ink)' }}>{t('export.fiskalyScopeWarning')}</p>
+            </div>
           )}
         </div>
 
