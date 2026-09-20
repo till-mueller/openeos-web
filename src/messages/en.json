@@ -465,7 +465,25 @@
       "confirmPassword": "Confirm password",
       "passwordChanged": "Password changed successfully",
       "sending": "Sending...",
-      "changing": "Changing..."
+      "changing": "Changing...",
+      "dataRights": {
+        "title": "Data & Account",
+        "description": "Export your personal data or permanently delete your account (GDPR Art. 15 & 17).",
+        "export": "Export data (JSON)",
+        "exporting": "Exporting…",
+        "exportHint": "Download all personal data as a JSON file.",
+        "exported": "Data export started",
+        "exportFailed": "Export failed",
+        "delete": "Delete account",
+        "deleteHint": "Irrevocably anonymize the account and terminate all sessions.",
+        "deleteModalTitle": "Permanently delete account",
+        "deleteWarning": "Your account will be irrevocably anonymized. Fiscal records remain stored without personal reference. All sessions will be terminated.",
+        "deleteConfirm": "Delete permanently",
+        "deleteConfirming": "Deleting…",
+        "passwordPrompt": "Password for confirmation",
+        "deleted": "Account deleted",
+        "deleteFailed": "Account could not be deleted"
+      }
     },
     "security": {
       "title": "Security",
@@ -1582,6 +1600,7 @@
     "actions": {
       "editPermissions": "Edit Permissions",
       "remove": "Remove",
+      "anonymize": "Anonymize",
       "cancelInvitation": "Cancel Invitation",
       "resendInvitation": "Resend"
     },
@@ -1596,10 +1615,17 @@
       "message": "Are you sure you want to remove this member from the organization?",
       "confirm": "Remove"
     },
+    "anonymizeConfirm": {
+      "title": "Anonymize member",
+      "message": "Personal data of {name} will be irrevocably anonymized.",
+      "hint": "Fiscal records remain stored without personal reference. This action cannot be undone.",
+      "confirm": "Anonymize"
+    },
     "notifications": {
       "invited": "Invitation sent successfully",
       "permissionsUpdated": "Permissions updated successfully",
-      "removed": "Member removed successfully"
+      "removed": "Member removed successfully",
+      "anonymized": "Member anonymized successfully"
     },
     "pin": {
       "title": "Device PIN",

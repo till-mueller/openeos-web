@@ -465,7 +465,25 @@
       "confirmPassword": "Passwort bestätigen",
       "passwordChanged": "Passwort erfolgreich geändert",
       "sending": "Senden...",
-      "changing": "Ändern..."
+      "changing": "Ändern...",
+      "dataRights": {
+        "title": "Daten & Konto",
+        "description": "Persönliche Daten exportieren oder das Konto unwiderruflich löschen (DSGVO Art. 15 & 17).",
+        "export": "Daten exportieren (JSON)",
+        "exporting": "Exportiert…",
+        "exportHint": "Alle personenbezogenen Daten im JSON-Format als Datei herunterladen.",
+        "exported": "Datenexport wurde gestartet",
+        "exportFailed": "Export fehlgeschlagen",
+        "delete": "Konto löschen",
+        "deleteHint": "Das Konto unwiderruflich anonymisieren und alle Sitzungen beenden.",
+        "deleteModalTitle": "Konto endgültig löschen",
+        "deleteWarning": "Dein Konto wird unwiderruflich anonymisiert. Steuerlich relevante Belege bleiben ohne Personenbezug gespeichert. Alle Sitzungen werden beendet.",
+        "deleteConfirm": "Endgültig löschen",
+        "deleteConfirming": "Löscht…",
+        "passwordPrompt": "Passwort zur Bestätigung",
+        "deleted": "Konto wurde gelöscht",
+        "deleteFailed": "Konto konnte nicht gelöscht werden"
+      }
     },
     "security": {
       "title": "Sicherheit",
@@ -1359,6 +1377,7 @@
     "actions": {
       "editPermissions": "Berechtigungen bearbeiten",
       "remove": "Entfernen",
+      "anonymize": "Anonymisieren",
       "cancelInvitation": "Einladung zurückziehen",
       "resendInvitation": "Erneut senden"
     },
@@ -1373,10 +1392,17 @@
       "message": "Sind Sie sicher, dass Sie dieses Mitglied aus der Organisation entfernen möchten?",
       "confirm": "Entfernen"
     },
+    "anonymizeConfirm": {
+      "title": "Mitglied anonymisieren",
+      "message": "Personenbezogene Daten von {name} werden unwiderruflich anonymisiert.",
+      "hint": "Steuerlich relevante Belege bleiben ohne Personenbezug gespeichert. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "confirm": "Anonymisieren"
+    },
     "notifications": {
       "invited": "Einladung erfolgreich gesendet",
       "permissionsUpdated": "Berechtigungen erfolgreich aktualisiert",
-      "removed": "Mitglied erfolgreich entfernt"
+      "removed": "Mitglied erfolgreich entfernt",
+      "anonymized": "Mitglied erfolgreich anonymisiert"
     },
     "pin": {
       "title": "Geräte-PIN",
