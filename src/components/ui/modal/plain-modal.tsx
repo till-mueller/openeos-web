@@ -68,7 +68,7 @@ export function PlainModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-lg p-2 text-tertiary hover:bg-secondary hover:text-secondary transition-colors"
+                  className="rounded-lg p-2 text-secondary hover:bg-secondary hover:text-primary transition-colors"
                   aria-label="Close"
                 >
                   <XClose className="h-5 w-5" />

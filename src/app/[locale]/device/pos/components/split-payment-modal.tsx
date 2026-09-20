@@ -4,8 +4,8 @@ import { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Minus, BankNote01, CreditCard01 } from '@untitledui/icons';
-import { Button } from '@/components/ui/buttons/button';
 import { PlainModal } from '@/components/ui/modal/plain-modal';
+import { PosActionButton } from './pos-action-button';
 import { useDeviceStore } from '@/stores/device-store';
 import { deviceApi } from '@/lib/api-client';
 import { formatCurrency } from '@/utils/format';
@@ -442,27 +442,26 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
               {/* Payment Actions */}
               <div className="space-y-3">
                 <div className={cx('grid gap-3', hasSumupReader ? 'grid-cols-2' : 'grid-cols-1')}>
-                  <Button
-                    color="secondary"
-                    size="lg"
+                  <PosActionButton
+                    icon={BankNote01}
+                    variant="outline"
                     onClick={handleCashClick}
-                    isDisabled={!hasSelection || isProcessing}
-                    iconLeading={BankNote01}
+                    disabled={!hasSelection || isProcessing}
                   >
                     {t('payCash')}
-                  </Button>
+                  </PosActionButton>
                   {/* Matches PosCart/OpenTabsDrawer: no reader configured means there's
                       nothing for this button to actually charge, so it's hidden rather
                       than silently recording an unverified "card" payment. */}
                   {hasSumupReader && (
-                    <Button
-                      size="lg"
+                    <PosActionButton
+                      icon={CreditCard01}
+                      variant="solid"
                       onClick={() => hasSelection && setShowSumupModal(true)}
-                      isDisabled={!hasSelection || isProcessing}
-                      iconLeading={CreditCard01}
+                      disabled={!hasSelection || isProcessing}
                     >
                       {t('payCard')}
-                    </Button>
+                    </PosActionButton>
                   )}
                 </div>
               </div>

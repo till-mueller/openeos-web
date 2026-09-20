@@ -5,8 +5,8 @@ import { useTranslations } from 'next-intl';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Receipt, BankNote01, CreditCard01, Scissors01, Check } from '@untitledui/icons';
 import { cx } from '@/utils/cx';
-import { Button } from '@/components/ui/buttons/button';
 import { PlainModal } from '@/components/ui/modal/plain-modal';
+import { PosActionButton } from './pos-action-button';
 import { useDeviceStore } from '@/stores/device-store';
 import { deviceApi } from '@/lib/api-client';
 import { formatCurrency } from '@/utils/format';
@@ -343,39 +343,32 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
                   </span>
                 </div>
                 <div className={cx('grid gap-3', hasSumupReader ? 'grid-cols-2' : 'grid-cols-1')}>
-                  <Button
-                    color="secondary"
-                    size="lg"
+                  <PosActionButton
+                    icon={BankNote01}
+                    variant="outline"
                     onClick={handleCashPayment}
-                    isDisabled={isProcessing || !hasSelection}
-                    iconLeading={BankNote01}
+                    disabled={isProcessing || !hasSelection}
                   >
                     {t('payCash')}
-                  </Button>
+                  </PosActionButton>
                   {/* Matches PosCart: no reader configured means there's nothing for this
                       button to actually charge, so it's hidden rather than silently
                       recording an unverified "card" payment with no terminal behind it. */}
                   {hasSumupReader && (
-                    <Button
-                      size="lg"
+                    <PosActionButton
+                      icon={CreditCard01}
+                      variant="solid"
                       onClick={handleCardPayment}
-                      isDisabled={isProcessing || !hasSelection}
-                      iconLeading={CreditCard01}
+                      disabled={isProcessing || !hasSelection}
                     >
                       {t('payCard')}
-                    </Button>
+                    </PosActionButton>
                   )}
                 </div>
 
-                <Button
-                  color="tertiary"
-                  size="lg"
-                  className="w-full"
-                  onClick={handleSplit}
-                  iconLeading={Scissors01}
-                >
+                <PosActionButton icon={Scissors01} variant="ghost" fullWidth onClick={handleSplit}>
                   {t('splitBill')}
-                </Button>
+                </PosActionButton>
               </div>
             </>
           )}
