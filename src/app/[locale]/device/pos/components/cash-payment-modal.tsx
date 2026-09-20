@@ -328,7 +328,7 @@ export function CashPaymentModal({
                   fontFamily: 'var(--pos-ff-mono)',
                   fontSize: 22,
                   fontWeight: 700,
-                  color: canConfirm ? 'var(--pos-ok)' : 'var(--pos-ink-3)',
+                  color: canConfirm ? 'var(--pos-ok)' : 'var(--pos-ink-2)',
                   lineHeight: 1.2,
                 }}
               >
@@ -376,8 +376,8 @@ export function CashPaymentModal({
               padding: '14px 16px',
               fontSize: 15,
               fontWeight: 700,
-              background: canConfirm ? 'var(--pos-accent)' : 'var(--pos-line)',
-              color: canConfirm ? 'var(--pos-accent-contrast)' : 'var(--pos-ink-3)',
+              background: canConfirm ? 'var(--pos-accent)' : 'var(--pos-line-strong)',
+              color: canConfirm ? 'var(--pos-accent-contrast)' : 'var(--pos-ink-2)',
               border: 'none',
               borderRadius: 'var(--pos-r-md)',
               cursor: canConfirm ? 'pointer' : 'not-allowed',

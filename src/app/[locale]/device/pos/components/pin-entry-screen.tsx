@@ -61,13 +61,19 @@ export function PinEntryScreen({ deviceName, onSuccess, onLogout }: PinEntryScre
   }, [handleVerify, pin]);
 
   return (
-    <div className="flex h-screen flex-col bg-secondary bg-grid">
+    <div className="pos-root" style={{ display: 'flex', height: '100dvh', flexDirection: 'column', background: 'var(--pos-surface-2)' }}>
       {/* Header */}
-      <header className="flex h-14 items-center justify-between border-b border-secondary bg-primary px-4">
-        <div className="flex items-center gap-3">
+      <header
+        style={{
+          height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '0 16px', background: 'var(--pos-surface)', borderBottom: '1px solid var(--pos-line)',
+          flexShrink: 0,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Logo width={100} height={25} />
-          <div className="h-5 w-px bg-secondary" />
-          <span className="text-sm font-medium text-primary">{deviceName}</span>
+          <div style={{ height: 20, width: 1, background: 'var(--pos-line)' }} />
+          <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--pos-ink)' }}>{deviceName}</span>
         </div>
         <Button color="tertiary" size="sm" onClick={onLogout}>
           <LogOut01 className="h-4 w-4" />
@@ -75,33 +81,44 @@ export function PinEntryScreen({ deviceName, onSuccess, onLogout }: PinEntryScre
       </header>
 
       {/* PIN Entry */}
-      <div className="flex flex-1 items-start justify-center p-4 pt-8 sm:pt-16">
-        <div className="w-full max-w-sm">
-          <div className="rounded-xl border border-secondary bg-primary p-6 text-center shadow-sm">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-secondary">
-              <Lock01 className="h-7 w-7 text-brand-primary" />
+      <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '32px 16px' }}>
+        <div style={{ width: '100%', maxWidth: 380 }}>
+          <div style={{
+            background: 'var(--pos-surface)', borderRadius: 'var(--pos-r-lg)',
+            border: '1px solid var(--pos-line)', boxShadow: 'var(--pos-sh-2)',
+            padding: 24, textAlign: 'center',
+          }}>
+            <div style={{
+              width: 56, height: 56, borderRadius: 999,
+              background: 'var(--pos-accent-soft)', margin: '0 auto 16px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Lock01 className="h-7 w-7" style={{ color: 'var(--pos-accent)' }} />
             </div>
-            <h2 className="mb-1 text-lg font-semibold text-primary">
+            <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--pos-ink)', marginBottom: 4 }}>
               {t('pin.title')}
             </h2>
-            <p className="mb-4 text-sm text-tertiary">
+            <p style={{ fontSize: 13, color: 'var(--pos-ink-3)', marginBottom: 16 }}>
               {t('pin.description')}
             </p>
 
             {/* PIN Dots */}
             <div
-              className={cx(
-                'mb-4 flex items-center justify-center gap-3 rounded-lg border border-secondary bg-secondary py-4',
-                shake && 'animate-shake'
-              )}
+              className={cx('mb-4', shake && 'animate-shake')}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+                borderRadius: 'var(--pos-r-md)', border: '1px solid var(--pos-line)',
+                background: 'var(--pos-surface-2)', padding: '16px 0',
+              }}
             >
               {Array.from({ length: MAX_PIN_LENGTH }).map((_, i) => (
                 <div
                   key={i}
-                  className={cx(
-                    'h-3.5 w-3.5 rounded-full transition-colors',
-                    i < pin.length ? 'bg-brand-primary' : 'bg-quaternary'
-                  )}
+                  style={{
+                    height: 14, width: 14, borderRadius: 999,
+                    background: i < pin.length ? 'var(--pos-accent)' : 'var(--pos-line-strong)',
+                    transition: 'background .12s',
+                  }}
                 />
               ))}
             </div>
@@ -127,7 +144,7 @@ export function PinEntryScreen({ deviceName, onSuccess, onLogout }: PinEntryScre
 
             {/* Error */}
             {error && (
-              <p className="mt-3 text-sm text-error-primary">{error}</p>
+              <p style={{ marginTop: 12, fontSize: 13, color: 'var(--pos-error, #dc2626)' }}>{error}</p>
             )}
           </div>
         </div>

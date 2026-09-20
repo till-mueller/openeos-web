@@ -11,6 +11,10 @@ interface NumPadProps {
   className?: string;
 }
 
+/** Uses --pos-* tokens (not the generic dashboard bg-primary/text-primary
+ *  classes) so it always matches the POS kiosk's own light theme instead of
+ *  following the device's system dark-mode setting, which previously left
+ *  the digits nearly unreadable (dark text on a dark button background). */
 export function NumPad({ value, onChange, onSubmit, maxLength = 10, className }: NumPadProps) {
   const handlePress = (digit: string) => {
     if (value.length < maxLength) {
@@ -26,6 +30,28 @@ export function NumPad({ value, onChange, onSubmit, maxLength = 10, className }:
     onChange('');
   };
 
+  const keyStyle: React.CSSProperties = {
+    height: 56,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'var(--pos-surface)',
+    border: '1px solid var(--pos-line)',
+    borderRadius: 'var(--pos-r-md)',
+    fontSize: 22,
+    fontWeight: 600,
+    color: 'var(--pos-ink)',
+    cursor: 'pointer',
+    transition: 'background .12s, border-color .12s',
+  };
+
+  const auxStyle: React.CSSProperties = {
+    ...keyStyle,
+    background: 'var(--pos-surface-2)',
+    color: 'var(--pos-ink-2)',
+    fontSize: 17,
+  };
+
   const buttons = [
     ['1', '2', '3'],
     ['4', '5', '6'],
@@ -38,12 +64,7 @@ export function NumPad({ value, onChange, onSubmit, maxLength = 10, className }:
       {buttons.flat().map((btn) => {
         if (btn === 'DEL') {
           return (
-            <button
-              key={btn}
-              type="button"
-              onClick={handleBackspace}
-              className="flex h-14 items-center justify-center rounded-lg border border-secondary bg-secondary text-tertiary transition-colors hover:bg-tertiary-hover active:bg-quaternary"
-            >
+            <button key={btn} type="button" onClick={handleBackspace} style={auxStyle} aria-label="Löschen">
               <Delete className="h-6 w-6" />
             </button>
           );
@@ -51,24 +72,14 @@ export function NumPad({ value, onChange, onSubmit, maxLength = 10, className }:
 
         if (btn === 'C') {
           return (
-            <button
-              key={btn}
-              type="button"
-              onClick={handleClear}
-              className="flex h-14 items-center justify-center rounded-lg border border-secondary bg-secondary text-tertiary transition-colors hover:bg-tertiary-hover active:bg-quaternary text-lg font-medium"
-            >
+            <button key={btn} type="button" onClick={handleClear} style={auxStyle}>
               C
             </button>
           );
         }
 
         return (
-          <button
-            key={btn}
-            type="button"
-            onClick={() => handlePress(btn)}
-            className="flex h-14 items-center justify-center rounded-lg border border-secondary bg-primary text-primary transition-colors hover:bg-secondary active:bg-tertiary text-2xl font-semibold"
-          >
+          <button key={btn} type="button" onClick={() => handlePress(btn)} style={keyStyle}>
             {btn}
           </button>
         );
