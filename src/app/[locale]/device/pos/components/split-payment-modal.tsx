@@ -221,9 +221,15 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
     }
   };
 
+  // The setTimeout is load-bearing (see open-tabs-drawer.tsx's handleCashPayment
+  // for the full explanation): this modal wraps its content in an isDismissable
+  // react-aria DialogModal, and opening CashPaymentModal (a plain fixed-position
+  // div) synchronously inside the same click raced react-aria's own
+  // outside-press dismissal, closing this dialog and wiping the selection
+  // before the popup ever read a real amount.
   const handleCashClick = () => {
     if (!hasSelection) return;
-    setShowCashModal(true);
+    setTimeout(() => setShowCashModal(true), 0);
   };
 
   const handleCashConfirm = () => {
@@ -447,7 +453,7 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
                   {hasSumupReader && (
                     <Button
                       size="lg"
-                      onClick={() => hasSelection && setShowSumupModal(true)}
+                      onClick={() => hasSelection && setTimeout(() => setShowSumupModal(true), 0)}
                       isDisabled={!hasSelection || isProcessing}
                       iconLeading={CreditCard01}
                     >

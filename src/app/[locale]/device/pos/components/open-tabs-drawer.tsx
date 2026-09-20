@@ -38,10 +38,6 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [paymentError, setPaymentError] = useState<string | null>(null);
-  // TEMP diagnostic round 4 — captures selectedTotal at the exact moment the
-  // Cash button is clicked, so we can tell "already 0 at click time" apart
-  // from "was correct at click time, something reset it after".
-  const [debugClickSnapshot, setDebugClickSnapshot] = useState<string | null>(null);
   const { settings } = useDeviceStore();
   const hasSumupReader = !!settings?.sumupReaderId;
 
@@ -88,11 +84,6 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
 
   useEffect(() => {
     if (!isOpen) {
-      // TEMP diagnostic round 5 — proving/disproving the theory that tapping
-      // Bar somehow causes the parent's isOpen (DialogModal) to flip false,
-      // which would clear selectedKeys via THIS effect after the click but
-      // before CashPaymentModal's own render reads selectedTotal.
-      setDebugClickSnapshot((prev) => `${prev ?? ''} | isOpen-went-false-at=${new Date().toISOString()}`);
       setSelectedKeys(new Set());
       setPaymentError(null);
     }
@@ -171,17 +162,23 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
     }
   };
 
-  // The button guards this via isDisabled too, but a Button prop-name typo is
-  // exactly what caused the "0€ payment popup" bug (isDisabled, not disabled,
-  // is what actually gates this design-system Button) -- guard here as well so
-  // that class of mistake can never again open a payment sheet with nothing selected.
+  // Guards against opening with nothing selected (belt-and-suspenders next to
+  // the button's own isDisabled).
+  //
+  // The setTimeout is load-bearing, not decorative: DialogModal is an
+  // isDismissable react-aria ModalOverlay, and opening CashPaymentModal (a
+  // plain fixed-position div, not a react-aria overlay) synchronously inside
+  // this same press/click handler raced react-aria's own outside-press
+  // dismissal for the dialog -- confirmed by instrumentation that
+  // isOpenTabsOpen flips false milliseconds after the click, which in turn
+  // cleared selectedKeys via the isOpen effect above, before
+  // CashPaymentModal ever got to read a non-zero selectedTotal. Deferring the
+  // state update to the next tick lets react-aria's press handling for THIS
+  // click fully settle first.
   const handleCashPayment = () => {
-    setDebugClickSnapshot(
-      `clickTime: hasSelection=${hasSelection} selectedTotal=${selectedTotal} keys=[${Array.from(selectedKeys).join(',')}]`,
-    );
     if (!hasSelection) return;
     setPaymentError(null);
-    setShowCashModal(true);
+    setTimeout(() => setShowCashModal(true), 0);
   };
 
   const handleCashConfirm = () => {
@@ -192,7 +189,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
   const handleCardPayment = () => {
     if (!hasSelection) return;
     setPaymentError(null);
-    setShowSumupModal(true);
+    setTimeout(() => setShowSumupModal(true), 0);
   };
 
   const handleSplit = () => {
@@ -344,15 +341,6 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
                     {formatCurrency(hasSelection ? selectedTotal : tableGroups.reduce((s, g) => s + g.remaining, 0))}
                   </span>
                 </div>
-                {/* TEMP diagnostic round 2 — round 1 (isDisabled fix) was real but
-                    didn't resolve it. Read this back verbatim (footer AND popup
-                    lines both), then this block can come back out. */}
-                <div className="text-[10px] font-mono text-tertiary break-all">
-                  debug: showCashModal={String(showCashModal)} isProcessing={String(isProcessing)} hasSelection={String(hasSelection)} keys=[{Array.from(selectedKeys).join(',')}] orders=[
-                  {selectedOrders.map((o) => `${o.orderNumber}:t${o.total}-p${o.paidAmount}`).join(',')}
-                  ] selectedTotal={selectedTotal} tableGroups={tableGroups.length} rawOrders={orders.length}
-                </div>
-
                 <div className={cx('grid gap-3', hasSumupReader ? 'grid-cols-2' : 'grid-cols-1')}>
                   <Button
                     color="secondary"
@@ -401,8 +389,6 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
         onConfirm={handleCashConfirm}
         isProcessing={isProcessing}
         error={paymentError}
-        source="OpenTabsDrawer"
-        debugExtra={debugClickSnapshot}
       />
 
       {/* SumUp Checkout Modal */}
