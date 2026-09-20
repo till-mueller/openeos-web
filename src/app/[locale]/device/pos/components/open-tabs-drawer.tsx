@@ -171,13 +171,10 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
     paySelectedOrders('cash');
   };
 
+  // Only reachable when hasSumupReader is true — the button itself is hidden otherwise.
   const handleCardPayment = () => {
     setPaymentError(null);
-    if (hasSumupReader) {
-      setShowSumupModal(true);
-    } else {
-      paySelectedOrders('card');
-    }
+    setShowSumupModal(true);
   };
 
   const handleSplit = () => {
@@ -330,7 +327,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className={cx('grid gap-3', hasSumupReader ? 'grid-cols-2' : 'grid-cols-1')}>
                   <Button
                     color="secondary"
                     size="lg"
@@ -340,14 +337,19 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
                   >
                     {t('payCash')}
                   </Button>
-                  <Button
-                    size="lg"
-                    onClick={handleCardPayment}
-                    disabled={isProcessing || !hasSelection}
-                    iconLeading={CreditCard01}
-                  >
-                    {t('payCard')}
-                  </Button>
+                  {/* Matches PosCart: no reader configured means there's nothing for this
+                      button to actually charge, so it's hidden rather than silently
+                      recording an unverified "card" payment with no terminal behind it. */}
+                  {hasSumupReader && (
+                    <Button
+                      size="lg"
+                      onClick={handleCardPayment}
+                      disabled={isProcessing || !hasSelection}
+                      iconLeading={CreditCard01}
+                    >
+                      {t('payCard')}
+                    </Button>
+                  )}
                 </div>
 
                 <Button
