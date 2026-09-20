@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Minus, BankNote01, CreditCard01 } from '@untitledui/icons';
 import { Button } from '@/components/ui/buttons/button';
-import { DialogModal } from '@/components/ui/modal/dialog-modal';
+import { PlainModal } from '@/components/ui/modal/plain-modal';
 import { useDeviceStore } from '@/stores/device-store';
 import { deviceApi } from '@/lib/api-client';
 import { formatCurrency } from '@/utils/format';
@@ -221,15 +221,9 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
     }
   };
 
-  // The setTimeout is load-bearing (see open-tabs-drawer.tsx's handleCashPayment
-  // for the full explanation): this modal wraps its content in an isDismissable
-  // react-aria DialogModal, and opening CashPaymentModal (a plain fixed-position
-  // div) synchronously inside the same click raced react-aria's own
-  // outside-press dismissal, closing this dialog and wiping the selection
-  // before the popup ever read a real amount.
   const handleCashClick = () => {
     if (!hasSelection) return;
-    setTimeout(() => setShowCashModal(true), 0);
+    setShowCashModal(true);
   };
 
   const handleCashConfirm = () => {
@@ -289,12 +283,11 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
 
   return (
     <>
-      <DialogModal
+      <PlainModal
         isOpen={isOpen}
         onClose={onClose}
         title={t('title')}
         size="lg"
-        isDismissable={false}
       >
         <div className="p-6">
           {isLoading ? (
@@ -454,7 +447,7 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
                   {hasSumupReader && (
                     <Button
                       size="lg"
-                      onClick={() => hasSelection && setTimeout(() => setShowSumupModal(true), 0)}
+                      onClick={() => hasSelection && setShowSumupModal(true)}
                       isDisabled={!hasSelection || isProcessing}
                       iconLeading={CreditCard01}
                     >
@@ -466,7 +459,7 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
             </>
           )}
         </div>
-      </DialogModal>
+      </PlainModal>
 
       {/* Cash Payment Modal */}
       <CashPaymentModal

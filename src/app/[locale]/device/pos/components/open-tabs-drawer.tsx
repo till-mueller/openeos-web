@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Receipt, BankNote01, CreditCard01, Scissors01, Check } from '@untitledui/icons';
 import { cx } from '@/utils/cx';
 import { Button } from '@/components/ui/buttons/button';
-import { DialogModal } from '@/components/ui/modal/dialog-modal';
+import { PlainModal } from '@/components/ui/modal/plain-modal';
 import { useDeviceStore } from '@/stores/device-store';
 import { deviceApi } from '@/lib/api-client';
 import { formatCurrency } from '@/utils/format';
@@ -38,11 +38,6 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [paymentError, setPaymentError] = useState<string | null>(null);
-  // TEMP diagnostic round 6 — verifying isDismissable={false} actually stops
-  // the dialog from closing on the Cash/Card tap (round 5 proved it WAS
-  // closing; setTimeout alone didn't fix it because the close still landed
-  // before the deferred callback ran).
-  const [debugDismissed, setDebugDismissed] = useState<string | null>(null);
   const { settings } = useDeviceStore();
   const hasSumupReader = !!settings?.sumupReaderId;
 
@@ -89,10 +84,6 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
 
   useEffect(() => {
     if (!isOpen) {
-      // Append, don't overwrite -- the onClose wrapper below sets a stack
-      // trace FIRST; this effect runs after the parent re-renders with
-      // isOpen=false and was clobbering it before this fix.
-      setDebugDismissed((prev) => `${prev ?? ''} || isOpen-went-false-at=${new Date().toISOString()}`);
       setSelectedKeys(new Set());
       setPaymentError(null);
     }
@@ -173,21 +164,10 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
 
   // Guards against opening with nothing selected (belt-and-suspenders next to
   // the button's own isDisabled).
-  //
-  // The setTimeout is load-bearing, not decorative: DialogModal is an
-  // isDismissable react-aria ModalOverlay, and opening CashPaymentModal (a
-  // plain fixed-position div, not a react-aria overlay) synchronously inside
-  // this same press/click handler raced react-aria's own outside-press
-  // dismissal for the dialog -- confirmed by instrumentation that
-  // isOpenTabsOpen flips false milliseconds after the click, which in turn
-  // cleared selectedKeys via the isOpen effect above, before
-  // CashPaymentModal ever got to read a non-zero selectedTotal. Deferring the
-  // state update to the next tick lets react-aria's press handling for THIS
-  // click fully settle first.
   const handleCashPayment = () => {
     if (!hasSelection) return;
     setPaymentError(null);
-    setTimeout(() => setShowCashModal(true), 0);
+    setShowCashModal(true);
   };
 
   const handleCashConfirm = () => {
@@ -198,7 +178,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
   const handleCardPayment = () => {
     if (!hasSelection) return;
     setPaymentError(null);
-    setTimeout(() => setShowSumupModal(true), 0);
+    setShowSumupModal(true);
   };
 
   const handleSplit = () => {
@@ -210,18 +190,11 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
 
   return (
     <>
-      <DialogModal
+      <PlainModal
         isOpen={isOpen}
-        onClose={() => {
-          // TEMP diagnostic round 7 — isDismissable={false} did NOT stop the
-          // close, so it's not react-aria's outside-press/escape dismissal.
-          // Capture exactly what called this to find the real trigger.
-          setDebugDismissed(`onClose-called stack=${new Error().stack?.split('\n').slice(1, 4).join(' <- ') ?? 'n/a'}`);
-          onClose();
-        }}
+        onClose={onClose}
         title={t('title')}
         size="lg"
-        isDismissable={false}
       >
         <div className="flex flex-col" style={{ maxHeight: 'calc(100vh - 200px)' }}>
           {isLoading ? (
@@ -395,7 +368,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
             </>
           )}
         </div>
-      </DialogModal>
+      </PlainModal>
 
       {/* Cash Payment Modal */}
       <CashPaymentModal
@@ -405,7 +378,6 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
         onConfirm={handleCashConfirm}
         isProcessing={isProcessing}
         error={paymentError}
-        debugExtra={debugDismissed}
       />
 
       {/* SumUp Checkout Modal */}
