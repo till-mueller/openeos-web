@@ -248,19 +248,18 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
     return (
       <div
         key={ui.item.id}
-        className={cx(
-          'rounded-lg border p-3 transition-colors',
-          isSelected
-            ? 'border-brand-primary bg-brand-primary_alt'
-            : 'border-secondary bg-primary'
-        )}
+        className="rounded-lg border p-3 transition-colors"
+        style={{
+          borderColor: isSelected ? 'var(--pos-accent)' : 'var(--pos-line)',
+          background: isSelected ? 'var(--pos-accent-soft)' : 'var(--pos-surface)',
+        }}
       >
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0">
-            <p className="font-medium text-primary truncate">
+            <p className="font-medium truncate" style={{ color: 'var(--pos-ink)' }}>
               {ui.item.productName}
             </p>
-            <p className="text-sm text-tertiary">
+            <p className="text-sm" style={{ color: 'var(--pos-ink-3)' }}>
               {formatCurrency(itemPrice)} × {ui.unpaidQuantity} {t('open')}
             </p>
           </div>
@@ -270,18 +269,20 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
               type="button"
               onClick={() => handleQuantityChange(ui.item.id, -1)}
               disabled={selectedQty === 0}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-secondary bg-primary text-tertiary hover:bg-secondary disabled:opacity-50"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border disabled:opacity-50"
+              style={{ borderColor: 'var(--pos-line)', background: 'var(--pos-surface)', color: 'var(--pos-ink-2)' }}
             >
               <Minus className="h-4 w-4" />
             </button>
-            <span className="w-8 text-center font-medium text-primary">
+            <span className="w-8 text-center font-medium" style={{ color: 'var(--pos-ink)' }}>
               {selectedQty}
             </span>
             <button
               type="button"
               onClick={() => handleQuantityChange(ui.item.id, 1)}
               disabled={selectedQty >= ui.unpaidQuantity}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-secondary bg-primary text-tertiary hover:bg-secondary disabled:opacity-50"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border disabled:opacity-50"
+              style={{ borderColor: 'var(--pos-line)', background: 'var(--pos-surface)', color: 'var(--pos-ink-2)' }}
             >
               <Plus className="h-4 w-4" />
             </button>
@@ -298,26 +299,30 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
         onClose={onClose}
         title={t('title')}
         size="lg"
+        theme="pos"
       >
         <div className="p-6">
           {isLoading ? (
             <div className="flex h-48 items-center justify-center">
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand-primary border-t-transparent" />
+              <div
+                className="h-6 w-6 animate-spin rounded-full border-2 border-t-transparent"
+                style={{ borderColor: 'var(--pos-accent)', borderTopColor: 'transparent' }}
+              />
             </div>
           ) : unpaidItems.length === 0 ? (
             <div className="flex h-48 items-center justify-center">
-              <p className="text-tertiary">{t('remaining')}: {formatCurrency(0)}</p>
+              <p style={{ color: 'var(--pos-ink-3)' }}>{t('remaining')}: {formatCurrency(0)}</p>
             </div>
           ) : (
             <>
               {/* Total remaining info */}
-              <div className="mb-4 rounded-lg bg-secondary p-3 flex items-center justify-between">
-                <p className="font-medium text-primary">
+              <div className="mb-4 rounded-lg p-3 flex items-center justify-between" style={{ background: 'var(--pos-surface-2)' }}>
+                <p className="font-medium" style={{ color: 'var(--pos-ink)' }}>
                   {orders.length} {orders.length === 1 ? 'Bestellung' : 'Bestellungen'}
                 </p>
                 <div className="text-right">
-                  <p className="text-sm text-tertiary">{t('remaining')}</p>
-                  <p className="text-lg font-bold text-primary">
+                  <p className="text-sm" style={{ color: 'var(--pos-ink-3)' }}>{t('remaining')}</p>
+                  <p className="text-lg font-bold" style={{ color: 'var(--pos-ink)' }}>
                     {formatCurrency(totalRemaining)}
                   </p>
                 </div>
@@ -326,12 +331,13 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
               {/* Items List header with grouping toggle */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-tertiary">{t('selectItems')}</p>
+                  <p className="text-sm font-medium" style={{ color: 'var(--pos-ink-3)' }}>{t('selectItems')}</p>
                   <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={handleClearSelection}
-                      className="text-xs text-tertiary hover:text-primary"
+                      className="text-xs disabled:opacity-50"
+                      style={{ color: 'var(--pos-ink-2)' }}
                       disabled={!hasSelection}
                     >
                       {t('clearSelection')}
@@ -339,7 +345,8 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
                     <button
                       type="button"
                       onClick={handleSelectAll}
-                      className="text-xs text-brand-primary hover:text-brand-primary/80"
+                      className="text-xs"
+                      style={{ color: 'var(--pos-accent)' }}
                     >
                       {t('selectAll')}
                     </button>
@@ -347,28 +354,28 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
                 </div>
 
                 {/* Grouping toggle */}
-                <div className="flex rounded-lg border border-secondary bg-secondary p-0.5 mb-3">
+                <div className="flex rounded-lg border p-0.5 mb-3" style={{ borderColor: 'var(--pos-line)', background: 'var(--pos-surface-2)' }}>
                   <button
                     type="button"
                     onClick={() => setGroupBy('order')}
-                    className={cx(
-                      'flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+                    className="flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                    style={
                       groupBy === 'order'
-                        ? 'bg-primary text-primary shadow-sm'
-                        : 'text-tertiary hover:text-primary'
-                    )}
+                        ? { background: 'var(--pos-surface)', color: 'var(--pos-ink)', boxShadow: 'var(--pos-sh-1)' }
+                        : { color: 'var(--pos-ink-3)' }
+                    }
                   >
                     {t('groupByOrder')}
                   </button>
                   <button
                     type="button"
                     onClick={() => setGroupBy('category')}
-                    className={cx(
-                      'flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+                    className="flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
+                    style={
                       groupBy === 'category'
-                        ? 'bg-primary text-primary shadow-sm'
-                        : 'text-tertiary hover:text-primary'
-                    )}
+                        ? { background: 'var(--pos-surface)', color: 'var(--pos-ink)', boxShadow: 'var(--pos-sh-1)' }
+                        : { color: 'var(--pos-ink-3)' }
+                    }
                   >
                     {t('groupByCategory')}
                   </button>
@@ -380,11 +387,11 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
                     groupedByOrder.map(({ order, items }) => (
                       <div key={order.id}>
                         <div className="flex items-center gap-2 mb-1.5">
-                          <span className="text-xs font-medium text-tertiary">
+                          <span className="text-xs font-medium" style={{ color: 'var(--pos-ink-3)' }}>
                             #{order.dailyNumber || order.orderNumber}
                           </span>
                           {order.tableNumber && (
-                            <span className="text-xs text-quaternary">
+                            <span className="text-xs" style={{ color: 'var(--pos-ink-3)' }}>
                               {t('table')} {order.tableNumber}
                             </span>
                           )}
@@ -399,13 +406,14 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
                     groupedByCategory.map(({ categoryName, items }) => (
                       <div key={categoryName}>
                         <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-xs font-medium text-tertiary">
+                          <span className="text-xs font-medium" style={{ color: 'var(--pos-ink-3)' }}>
                             {categoryName}
                           </span>
                           <button
                             type="button"
                             onClick={() => handleSelectAllCategory(items)}
-                            className="text-xs text-brand-primary hover:text-brand-primary/80"
+                            className="text-xs"
+                            style={{ color: 'var(--pos-accent)' }}
                           >
                             {t('selectAllCategory')}
                           </button>
@@ -421,18 +429,14 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
 
               {/* Selected Summary */}
               <div
-                className={cx(
-                  'rounded-lg p-4 mb-4 transition-colors',
-                  hasSelection ? 'bg-success-secondary dark:text-white' : 'bg-secondary'
-                )}
+                className="rounded-lg p-4 mb-4 transition-colors"
+                style={{ background: hasSelection ? 'var(--pos-accent-soft)' : 'var(--pos-surface-2)' }}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-primary">{t('selectedAmount')}</span>
+                  <span className="font-medium" style={{ color: 'var(--pos-ink)' }}>{t('selectedAmount')}</span>
                   <span
-                    className={cx(
-                      'text-2xl font-bold',
-                      hasSelection ? 'text-success-primary dark:text-white' : 'text-tertiary'
-                    )}
+                    className="text-2xl font-bold"
+                    style={{ color: hasSelection ? 'var(--pos-accent)' : 'var(--pos-ink-3)' }}
                   >
                     {formatCurrency(selectedTotal)}
                   </span>

@@ -12,6 +12,10 @@ interface PlainModalProps {
   children: ReactNode;
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** 'pos' pins the chrome to the fixed --pos-* palette so it stays legible
+   *  regardless of system dark mode -- use for anything opened from the POS
+   *  kiosk route, which is meant to never follow dashboard theming. */
+  theme?: 'default' | 'pos';
 }
 
 const sizes = {
@@ -44,8 +48,11 @@ export function PlainModal({
   children,
   className,
   size = 'md',
+  theme = 'default',
 }: PlainModalProps) {
   if (!isOpen) return null;
+
+  const isPos = theme === 'pos';
 
   return (
     <div
@@ -53,22 +60,42 @@ export function PlainModal({
     >
       <div className={cx('max-h-full w-full align-middle', sizes[size], className)}>
         <div className="flex w-full items-center justify-center">
-          <div className="w-full rounded-xl bg-primary shadow-xl border border-secondary">
+          <div
+            className={cx('w-full rounded-xl shadow-xl', !isPos && 'bg-primary border border-secondary')}
+            style={isPos ? { background: 'var(--pos-surface)', border: '1px solid var(--pos-line)' } : undefined}
+          >
             {/* Header */}
             {(title || description) && (
-              <div className="flex items-start justify-between gap-4 border-b border-secondary px-6 py-4">
+              <div
+                className={cx('flex items-start justify-between gap-4 px-6 py-4', !isPos && 'border-b border-secondary')}
+                style={isPos ? { borderBottom: '1px solid var(--pos-line)' } : undefined}
+              >
                 <div>
                   {title && (
-                    <h2 className="text-lg font-semibold text-primary">{title}</h2>
+                    <h2
+                      className={cx('text-lg font-semibold', !isPos && 'text-primary')}
+                      style={isPos ? { color: 'var(--pos-ink)' } : undefined}
+                    >
+                      {title}
+                    </h2>
                   )}
                   {description && (
-                    <p className="mt-1 text-sm text-tertiary">{description}</p>
+                    <p
+                      className={cx('mt-1 text-sm', !isPos && 'text-tertiary')}
+                      style={isPos ? { color: 'var(--pos-ink-3)' } : undefined}
+                    >
+                      {description}
+                    </p>
                   )}
                 </div>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="rounded-lg p-2 text-secondary hover:bg-secondary hover:text-primary transition-colors"
+                  className={cx(
+                    'rounded-lg p-2 transition-colors',
+                    !isPos && 'text-secondary hover:bg-secondary hover:text-primary'
+                  )}
+                  style={isPos ? { color: 'var(--pos-ink-2)' } : undefined}
                   aria-label="Close"
                 >
                   <XClose className="h-5 w-5" />

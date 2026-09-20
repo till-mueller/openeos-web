@@ -207,17 +207,21 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
         onClose={onClose}
         title={t('title')}
         size="lg"
+        theme="pos"
       >
         <div className="flex flex-col" style={{ maxHeight: 'calc(100vh - 200px)' }}>
           {isLoading ? (
             <div className="flex h-48 items-center justify-center p-6">
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-brand-primary border-t-transparent" />
+              <div
+                className="h-6 w-6 animate-spin rounded-full border-2 border-t-transparent"
+                style={{ borderColor: 'var(--pos-accent)', borderTopColor: 'transparent' }}
+              />
             </div>
           ) : tableGroups.length === 0 ? (
             <div className="flex h-48 flex-col items-center justify-center text-center p-6">
-              <Receipt className="h-12 w-12 text-tertiary mb-4" />
-              <p className="text-lg font-medium text-primary">{t('noOpenTabs')}</p>
-              <p className="text-sm text-tertiary">{t('noOpenTabsDescription')}</p>
+              <Receipt className="h-12 w-12 mb-4" style={{ color: 'var(--pos-ink-3)' }} />
+              <p className="text-lg font-medium" style={{ color: 'var(--pos-ink)' }}>{t('noOpenTabs')}</p>
+              <p className="text-sm" style={{ color: 'var(--pos-ink-3)' }}>{t('noOpenTabsDescription')}</p>
             </div>
           ) : (
             <>
@@ -226,19 +230,21 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
                 <button
                   type="button"
                   onClick={toggleAll}
-                  className="flex items-center gap-2 text-sm font-medium text-primary"
+                  className="flex items-center gap-2 text-sm font-medium"
+                  style={{ color: 'var(--pos-ink)' }}
                 >
                   <span
-                    className={cx(
-                      'flex h-5 w-5 items-center justify-center rounded border',
-                      allSelected ? 'border-brand-primary bg-brand-primary' : 'border-secondary',
-                    )}
+                    className="flex h-5 w-5 items-center justify-center rounded border"
+                    style={{
+                      borderColor: allSelected ? 'var(--pos-accent)' : 'var(--pos-line)',
+                      background: allSelected ? 'var(--pos-accent)' : 'transparent',
+                    }}
                   >
-                    {allSelected && <Check className="h-3.5 w-3.5 text-white" />}
+                    {allSelected && <Check className="h-3.5 w-3.5" style={{ color: 'var(--pos-accent-contrast)' }} />}
                   </span>
                   {t('selectAll')}
                 </button>
-                <span className="text-sm text-tertiary">
+                <span className="text-sm" style={{ color: 'var(--pos-ink-3)' }}>
                   {hasSelection ? t('selectedTables', { count: selectedGroups.length }) : t('selectHint')}
                 </span>
               </div>
@@ -253,31 +259,31 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
                         key={group.key}
                         type="button"
                         onClick={() => toggleGroup(group.key)}
-                        className={cx(
-                          'w-full rounded-lg border p-4 text-left transition-colors',
-                          selected
-                            ? 'border-brand-primary bg-brand-primary/5'
-                            : 'border-secondary bg-primary',
-                        )}
+                        className="w-full rounded-lg border p-4 text-left transition-colors"
+                        style={{
+                          borderColor: selected ? 'var(--pos-accent)' : 'var(--pos-line)',
+                          background: selected ? 'var(--pos-accent-soft)' : 'var(--pos-surface)',
+                        }}
                       >
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <span
-                              className={cx(
-                                'flex h-5 w-5 shrink-0 items-center justify-center rounded border',
-                                selected ? 'border-brand-primary bg-brand-primary' : 'border-secondary',
-                              )}
+                              className="flex h-5 w-5 shrink-0 items-center justify-center rounded border"
+                              style={{
+                                borderColor: selected ? 'var(--pos-accent)' : 'var(--pos-line)',
+                                background: selected ? 'var(--pos-accent)' : 'transparent',
+                              }}
                             >
-                              {selected && <Check className="h-3.5 w-3.5 text-white" />}
+                              {selected && <Check className="h-3.5 w-3.5" style={{ color: 'var(--pos-accent-contrast)' }} />}
                             </span>
-                            <span className="font-medium text-primary">
+                            <span className="font-medium" style={{ color: 'var(--pos-ink)' }}>
                               {group.tableLabel ? `${t('table')} ${group.tableLabel}` : t('noTable')}
                             </span>
-                            <span className="text-sm text-tertiary">
+                            <span className="text-sm" style={{ color: 'var(--pos-ink-3)' }}>
                               {group.orders.length} {t('orders', { count: group.orders.length })}
                             </span>
                           </div>
-                          <p className="text-lg font-bold text-brand-primary">
+                          <p className="text-lg font-bold" style={{ color: 'var(--pos-accent)' }}>
                             {formatCurrency(group.remaining)}
                           </p>
                         </div>
@@ -285,7 +291,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
                         {group.orders.map((order) => (
                           <div key={order.id} className="mb-1.5 last:mb-0">
                             {order.customerName && (
-                              <div className="text-xs text-tertiary mb-0.5">
+                              <div className="text-xs mb-0.5" style={{ color: 'var(--pos-ink-3)' }}>
                                 #{order.dailyNumber || order.orderNumber} - {order.customerName}
                               </div>
                             )}
@@ -298,15 +304,12 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
                                     return (
                                       <div
                                         key={idx}
-                                        className={cx(
-                                          'flex justify-between text-sm',
-                                          isFullyPaid && 'line-through opacity-60'
-                                        )}
+                                        className={cx('flex justify-between text-sm', isFullyPaid && 'line-through opacity-60')}
                                       >
-                                        <span className={cx(isFullyPaid ? 'text-error-primary' : 'text-tertiary')}>
+                                        <span style={{ color: isFullyPaid ? 'var(--pos-danger)' : 'var(--pos-ink-3)' }}>
                                           {item.quantity}x {item.productName}
                                         </span>
-                                        <span className={cx(isFullyPaid ? 'text-error-primary' : 'text-primary')}>
+                                        <span style={{ color: isFullyPaid ? 'var(--pos-danger)' : 'var(--pos-ink)' }}>
                                           {formatCurrency(Number(item.totalPrice))}
                                         </span>
                                       </div>
@@ -315,7 +318,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
                               </div>
                             )}
                             {Number(order.paidAmount) > 0 && (
-                              <p className="text-xs text-tertiary mt-0.5">
+                              <p className="text-xs mt-0.5" style={{ color: 'var(--pos-ink-3)' }}>
                                 {t('partlyPaid', { amount: formatCurrency(Number(order.paidAmount)) })}
                               </p>
                             )}
@@ -328,17 +331,20 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
               </div>
 
               {/* Sticky footer — overview of what's about to be paid + payment actions */}
-              <div className="border-t border-secondary px-6 py-4 space-y-3">
+              <div className="px-6 py-4 space-y-3" style={{ borderTop: '1px solid var(--pos-line)' }}>
                 {paymentError && !showCashModal && (
-                  <div className="rounded-lg border border-error-primary bg-error-primary/10 px-3 py-2 text-sm font-medium text-error-primary">
+                  <div
+                    className="rounded-lg border px-3 py-2 text-sm font-medium"
+                    style={{ borderColor: 'var(--pos-danger)', background: 'color-mix(in srgb, var(--pos-danger) 10%, transparent)', color: 'var(--pos-danger)' }}
+                  >
                     {paymentError}
                   </div>
                 )}
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-primary">
+                  <span className="font-medium" style={{ color: 'var(--pos-ink)' }}>
                     {hasSelection ? t('selectedTotal') : t('totalOpen')}
                   </span>
-                  <span className="text-2xl font-bold text-brand-primary">
+                  <span className="text-2xl font-bold" style={{ color: 'var(--pos-accent)' }}>
                     {formatCurrency(hasSelection ? selectedTotal : tableGroups.reduce((s, g) => s + g.remaining, 0))}
                   </span>
                 </div>
