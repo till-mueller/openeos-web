@@ -162,7 +162,12 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
     }
   };
 
+  // The button guards this via isDisabled too, but a Button prop-name typo is
+  // exactly what caused the "0€ payment popup" bug (isDisabled, not disabled,
+  // is what actually gates this design-system Button) -- guard here as well so
+  // that class of mistake can never again open a payment sheet with nothing selected.
   const handleCashPayment = () => {
+    if (!hasSelection) return;
     setPaymentError(null);
     setShowCashModal(true);
   };
@@ -173,6 +178,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
 
   // Only reachable when hasSumupReader is true — the button itself is hidden otherwise.
   const handleCardPayment = () => {
+    if (!hasSelection) return;
     setPaymentError(null);
     setShowSumupModal(true);
   };
@@ -326,22 +332,13 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
                     {formatCurrency(hasSelection ? selectedTotal : tableGroups.reduce((s, g) => s + g.remaining, 0))}
                   </span>
                 </div>
-                {/* TEMP diagnostic for the "selected total shows 0€" investigation —
-                    read this text back verbatim, then this block can come back out. */}
-                {hasSelection && (
-                  <div className="text-[10px] font-mono text-tertiary break-all">
-                    debug: keys=[{Array.from(selectedKeys).join(',')}] orders=[
-                    {selectedOrders.map((o) => `${o.orderNumber}:t${o.total}-p${o.paidAmount}`).join(',')}
-                    ] selectedTotal={selectedTotal}
-                  </div>
-                )}
 
                 <div className={cx('grid gap-3', hasSumupReader ? 'grid-cols-2' : 'grid-cols-1')}>
                   <Button
                     color="secondary"
                     size="lg"
                     onClick={handleCashPayment}
-                    disabled={isProcessing || !hasSelection}
+                    isDisabled={isProcessing || !hasSelection}
                     iconLeading={BankNote01}
                   >
                     {t('payCash')}
@@ -353,7 +350,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
                     <Button
                       size="lg"
                       onClick={handleCardPayment}
-                      disabled={isProcessing || !hasSelection}
+                      isDisabled={isProcessing || !hasSelection}
                       iconLeading={CreditCard01}
                     >
                       {t('payCard')}

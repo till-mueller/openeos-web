@@ -186,7 +186,7 @@ export default function DeviceVerifyPage() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={code.length !== 6 || lookupMutation.isPending}
+                isDisabled={code.length !== 6 || lookupMutation.isPending}
               >
                 {lookupMutation.isPending ? (
                   <Loading02 className="h-5 w-5 animate-spin" />
@@ -276,7 +276,7 @@ export default function DeviceVerifyPage() {
                 <Button
                   className="flex-1"
                   onClick={handleLink}
-                  disabled={linkMutation.isPending || !selectedOrgId}
+                  isDisabled={linkMutation.isPending || !selectedOrgId}
                 >
                   {linkMutation.isPending ? (
                     <Loading02 className="h-5 w-5 animate-spin" />

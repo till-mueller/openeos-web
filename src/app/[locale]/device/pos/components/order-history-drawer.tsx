@@ -267,7 +267,7 @@ export function OrderHistoryDrawer({ isOpen, onClose }: OrderHistoryDrawerProps)
                               size="sm"
                               className="flex-1"
                               onClick={handleCancel}
-                              disabled={cancelMutation.isPending}
+                              isDisabled={cancelMutation.isPending}
                             >
                               {cancelMutation.isPending ? '...' : t('confirmCancel')}
                             </Button>
@@ -291,7 +291,7 @@ export function OrderHistoryDrawer({ isOpen, onClose }: OrderHistoryDrawerProps)
                             size="sm"
                             iconLeading={Printer}
                             onClick={() => handleReprint('tickets')}
-                            disabled={reprintMutation.isPending}
+                            isDisabled={reprintMutation.isPending}
                           >
                             {t('reprintTickets')}
                           </Button>
@@ -301,7 +301,7 @@ export function OrderHistoryDrawer({ isOpen, onClose }: OrderHistoryDrawerProps)
                               size="sm"
                               iconLeading={Receipt}
                               onClick={() => handleReprint('receipt')}
-                              disabled={reprintMutation.isPending}
+                              isDisabled={reprintMutation.isPending}
                             >
                               {t('reprintReceipt')}
                             </Button>

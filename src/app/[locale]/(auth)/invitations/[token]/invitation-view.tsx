@@ -159,7 +159,7 @@ export function InvitationView({ token }: InvitationViewProps) {
             color="secondary"
             onClick={handleDecline}
             isLoading={isDeclining}
-            disabled={isAccepting}
+            isDisabled={isAccepting}
           >
             {t('decline')}
           </Button>
@@ -168,7 +168,7 @@ export function InvitationView({ token }: InvitationViewProps) {
             color="primary"
             onClick={handleAccept}
             isLoading={isAccepting}
-            disabled={isDeclining}
+            isDisabled={isDeclining}
           >
             {t('accept')}
           </Button>

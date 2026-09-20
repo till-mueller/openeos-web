@@ -119,7 +119,7 @@ export function PinEntryScreen({ deviceName, onSuccess, onLogout }: PinEntryScre
               onClick={handleSubmit}
               className="w-full"
               size="lg"
-              disabled={pin.length < MIN_PIN_LENGTH || isVerifying}
+              isDisabled={pin.length < MIN_PIN_LENGTH || isVerifying}
               isLoading={isVerifying}
             >
               {isVerifying ? t('pin.verifying') : tCommon('confirm')}

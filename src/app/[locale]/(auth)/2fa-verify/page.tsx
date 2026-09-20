@@ -260,7 +260,7 @@ export default function TwoFactorVerifyPage() {
         <Button
           type="submit"
           className="w-full"
-          disabled={isLoading || codeValue.length < 6}
+          isDisabled={isLoading || codeValue.length < 6}
         >
           {isLoading ? (
             <>

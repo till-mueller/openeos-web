@@ -217,13 +217,6 @@ export function CashPaymentModal({
             <div style={{ fontSize: 12, color: 'var(--pos-ink-3)', marginTop: 2 }}>
               {t('amountDue')}: <strong style={{ color: 'var(--pos-ink)' }}>{formatCurrency(total)}</strong>
             </div>
-            {/* TEMP diagnostic for the "amount due shows 0€" investigation — read this
-                text back verbatim, then this block can come back out. */}
-            {total <= 0 && (
-              <div style={{ fontSize: 10, color: 'var(--pos-warn, orange)', marginTop: 2, fontFamily: 'var(--pos-ff-mono)' }}>
-                debug: total prop = {String(total)}
-              </div>
-            )}
           </div>
           <button
             type="button"

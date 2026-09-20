@@ -436,7 +436,7 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
                     color="secondary"
                     size="lg"
                     onClick={handleCashClick}
-                    disabled={!hasSelection || isProcessing}
+                    isDisabled={!hasSelection || isProcessing}
                     iconLeading={BankNote01}
                   >
                     {t('payCash')}
@@ -447,8 +447,8 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
                   {hasSumupReader && (
                     <Button
                       size="lg"
-                      onClick={() => setShowSumupModal(true)}
-                      disabled={!hasSelection || isProcessing}
+                      onClick={() => hasSelection && setShowSumupModal(true)}
+                      isDisabled={!hasSelection || isProcessing}
                       iconLeading={CreditCard01}
                     >
                       {t('payCard')}
