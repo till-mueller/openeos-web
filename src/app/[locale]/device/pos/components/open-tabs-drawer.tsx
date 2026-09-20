@@ -89,7 +89,10 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
 
   useEffect(() => {
     if (!isOpen) {
-      setDebugDismissed(`isOpen-went-false-at=${new Date().toISOString()}`);
+      // Append, don't overwrite -- the onClose wrapper below sets a stack
+      // trace FIRST; this effect runs after the parent re-renders with
+      // isOpen=false and was clobbering it before this fix.
+      setDebugDismissed((prev) => `${prev ?? ''} || isOpen-went-false-at=${new Date().toISOString()}`);
       setSelectedKeys(new Set());
       setPaymentError(null);
     }
