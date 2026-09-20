@@ -88,6 +88,11 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
 
   useEffect(() => {
     if (!isOpen) {
+      // TEMP diagnostic round 5 — proving/disproving the theory that tapping
+      // Bar somehow causes the parent's isOpen (DialogModal) to flip false,
+      // which would clear selectedKeys via THIS effect after the click but
+      // before CashPaymentModal's own render reads selectedTotal.
+      setDebugClickSnapshot((prev) => `${prev ?? ''} | isOpen-went-false-at=${new Date().toISOString()}`);
       setSelectedKeys(new Set());
       setPaymentError(null);
     }
