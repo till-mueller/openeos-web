@@ -209,7 +209,13 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
     <>
       <DialogModal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={() => {
+          // TEMP diagnostic round 7 — isDismissable={false} did NOT stop the
+          // close, so it's not react-aria's outside-press/escape dismissal.
+          // Capture exactly what called this to find the real trigger.
+          setDebugDismissed(`onClose-called stack=${new Error().stack?.split('\n').slice(1, 4).join(' <- ') ?? 'n/a'}`);
+          onClose();
+        }}
         title={t('title')}
         size="lg"
         isDismissable={false}
