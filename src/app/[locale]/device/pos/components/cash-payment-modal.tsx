@@ -15,6 +15,8 @@ interface CashPaymentModalProps {
   error?: string | null;
   /** TEMP diagnostic — which parent mounted this instance (there are two: PosCart and OpenTabsDrawer). */
   source?: string;
+  /** TEMP diagnostic — a snapshot string captured by the caller at click time. */
+  debugExtra?: string | null;
 }
 
 /** POS-styled numpad — uses --pos-* tokens to match the kasse design. */
@@ -92,6 +94,7 @@ export function CashPaymentModal({
   isProcessing = false,
   error = null,
   source = 'unknown',
+  debugExtra = null,
 }: CashPaymentModalProps) {
   const t = useTranslations('pos.cashPayment');
   const [received, setReceived] = useState('');
@@ -220,9 +223,10 @@ export function CashPaymentModal({
             <div style={{ fontSize: 12, color: 'var(--pos-ink-3)', marginTop: 2 }}>
               {t('amountDue')}: <strong style={{ color: 'var(--pos-ink)' }}>{formatCurrency(total)}</strong>
             </div>
-            {/* TEMP diagnostic round 3 — read back verbatim, then remove. */}
+            {/* TEMP diagnostic round 4 — read back verbatim, then remove. */}
             <div style={{ fontSize: 10, color: 'var(--pos-warn, orange)', marginTop: 2, fontFamily: 'var(--pos-ff-mono)' }}>
               debug: source={source} total prop = {String(total)}
+              {debugExtra && <><br />debug: {debugExtra}</>}
             </div>
           </div>
           <button

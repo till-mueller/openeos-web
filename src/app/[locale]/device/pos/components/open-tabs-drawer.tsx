@@ -38,6 +38,10 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  // TEMP diagnostic round 4 — captures selectedTotal at the exact moment the
+  // Cash button is clicked, so we can tell "already 0 at click time" apart
+  // from "was correct at click time, something reset it after".
+  const [debugClickSnapshot, setDebugClickSnapshot] = useState<string | null>(null);
   const { settings } = useDeviceStore();
   const hasSumupReader = !!settings?.sumupReaderId;
 
@@ -167,6 +171,9 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
   // is what actually gates this design-system Button) -- guard here as well so
   // that class of mistake can never again open a payment sheet with nothing selected.
   const handleCashPayment = () => {
+    setDebugClickSnapshot(
+      `clickTime: hasSelection=${hasSelection} selectedTotal=${selectedTotal} keys=[${Array.from(selectedKeys).join(',')}]`,
+    );
     if (!hasSelection) return;
     setPaymentError(null);
     setShowCashModal(true);
@@ -390,6 +397,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
         isProcessing={isProcessing}
         error={paymentError}
         source="OpenTabsDrawer"
+        debugExtra={debugClickSnapshot}
       />
 
       {/* SumUp Checkout Modal */}
