@@ -2041,7 +2041,30 @@
       "viewBewirtungsbeleg": "Bewirtungsbeleg",
       "emailBewirtungsbeleg": "Email Bewirtungsbeleg",
       "bewirtungsbelegEmailSent": "Bewirtungsbeleg emailed to {email}",
-      "bewirtungsbelegFailed": "Couldn't load the Bewirtungsbeleg. Please try again."
+      "bewirtungsbelegFailed": "Couldn't load the Bewirtungsbeleg. Please try again.",
+      "force": {
+        "sectionTitle": "Admin overrides",
+        "failureDetail": "TSE failure detail",
+        "errorCode": "Error code",
+        "httpStatus": "HTTP status",
+        "failureReason": "Reason",
+        "failedAt": "Failed at",
+        "cancelButton": "Force cancel",
+        "statusButton": "Force status",
+        "refundButton": "Force refund",
+        "cancelReasonHint": "Bypasses the normal cancel guardrails. Requires the TSE reversal to succeed, or the action is rejected and logged.",
+        "statusReasonHint": "Overrides the order status directly, no TSE involved. Use Force cancel for cancellations.",
+        "refundReasonHint": "Requires the TSE reversal to succeed, or the action is rejected and logged.",
+        "reasonPlaceholder": "Reason (required, written to the audit trail)",
+        "confirm": "Confirm",
+        "cancelSuccess": "Order force-cancelled",
+        "cancelFailed": "Force-cancel failed",
+        "statusSuccess": "Status force-updated",
+        "statusFailed": "Force status-change failed",
+        "refundSuccess": "Payment force-refunded",
+        "refundFailed": "Force-refund failed",
+        "tseReversalRequired": "TSE reversal failed — the action was aborted and logged for review. Resolve the TSE issue first."
+      }
     },
     "pagination": {
       "prev": "Previous",

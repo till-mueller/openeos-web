@@ -2041,7 +2041,30 @@
       "viewBewirtungsbeleg": "Bewirtungsbeleg",
       "emailBewirtungsbeleg": "Bewirtungsbeleg per E-Mail",
       "bewirtungsbelegEmailSent": "Bewirtungsbeleg an {email} gesendet",
-      "bewirtungsbelegFailed": "Bewirtungsbeleg konnte nicht geladen werden. Bitte erneut versuchen."
+      "bewirtungsbelegFailed": "Bewirtungsbeleg konnte nicht geladen werden. Bitte erneut versuchen.",
+      "force": {
+        "sectionTitle": "Admin-Overrides",
+        "failureDetail": "TSE-Fehlerdetail",
+        "errorCode": "Fehlercode",
+        "httpStatus": "HTTP-Status",
+        "failureReason": "Grund",
+        "failedAt": "Fehlgeschlagen am",
+        "cancelButton": "Stornierung erzwingen",
+        "statusButton": "Status erzwingen",
+        "refundButton": "Erstattung erzwingen",
+        "cancelReasonHint": "Umgeht die normalen Stornierungs-Schutzmechanismen. Erfordert eine erfolgreiche TSE-Stornierung, sonst wird die Aktion abgelehnt und protokolliert.",
+        "statusReasonHint": "Setzt den Bestellstatus direkt, ohne TSE-Bezug. Für Stornierungen \"Stornierung erzwingen\" verwenden.",
+        "refundReasonHint": "Erfordert eine erfolgreiche TSE-Stornierung, sonst wird die Aktion abgelehnt und protokolliert.",
+        "reasonPlaceholder": "Grund (Pflichtfeld, wird im Audit-Trail gespeichert)",
+        "confirm": "Bestätigen",
+        "cancelSuccess": "Bestellung erzwungen storniert",
+        "cancelFailed": "Erzwungene Stornierung fehlgeschlagen",
+        "statusSuccess": "Status erzwungen aktualisiert",
+        "statusFailed": "Erzwungene Statusänderung fehlgeschlagen",
+        "refundSuccess": "Zahlung erzwungen erstattet",
+        "refundFailed": "Erzwungene Erstattung fehlgeschlagen",
+        "tseReversalRequired": "TSE-Stornierung fehlgeschlagen — Aktion wurde abgebrochen und protokolliert. Bitte zuerst das TSE-Problem beheben."
+      }
     },
     "pagination": {
       "prev": "Zurück",

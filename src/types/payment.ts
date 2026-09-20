@@ -30,6 +30,13 @@ export interface TseTransactionData {
   qrCodeData: string;
   failed?: boolean;
   failureReason?: string;
+  /** Structured failure detail (set when failed: true) — see api's TseService errorCode mapping
+   *  (TSS_NOT_INITIALIZED, TSE_ADMIN_AUTH, raw fiskaly code, HTTP_<status>, NETWORK). */
+  errorCode?: string;
+  /** HTTP status from the provider/transport when available. */
+  httpStatus?: number;
+  /** ISO timestamp of the failed attempt. */
+  failedAt?: string;
 }
 
 // Payment
@@ -71,6 +78,10 @@ export interface SplitPaymentData {
   items: SplitPaymentItemData[];
   providerTransactionId?: string;
   metadata?: Record<string, unknown>;
+}
+
+export interface ForceRefundPaymentData {
+  reason: string;
 }
 
 export interface QueryPaymentsParams {

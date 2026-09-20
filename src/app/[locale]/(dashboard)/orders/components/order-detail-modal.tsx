@@ -2,14 +2,17 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatCurrency, formatDateTime } from '@/utils/format';
 import { DialogCloseButton } from '@/components/shared/dialog-close-button';
-import { paymentsApi } from '@/lib/api-client';
+import { ordersApi, paymentsApi } from '@/lib/api-client';
 import { toast } from '@/components/shared/toast';
+import { useAuthStore } from '@/stores/auth-store';
+import { ApiException } from '@/types/api';
 import {
   getOrderChannel,
   getOrderTseStatus,
+  type ForceableOrderStatus,
   type Order,
   type OrderChannel,
   type OrderItem,
@@ -18,6 +21,8 @@ import {
   type OrderTseStatus,
 } from '@/types/order';
 import type { Payment } from '@/types/payment';
+
+const FORCEABLE_STATUSES: ForceableOrderStatus[] = ['open', 'in_progress', 'ready', 'completed'];
 
 const statusBadge: Record<OrderStatus, string> = {
   open: 'badge badge--neutral',
@@ -55,6 +60,8 @@ interface OrderDetailModalProps {
 
 export function OrderDetailModal({ order, creatorLabel, organizationId, onClose }: OrderDetailModalProps) {
   const t = useTranslations();
+  const { currentOrganization } = useAuthStore();
+  const isAdmin = currentOrganization?.role === 'admin';
 
   if (!order) return null;
 
@@ -63,6 +70,7 @@ export function OrderDetailModal({ order, creatorLabel, organizationId, onClose 
   const discount = Number(order.discountAmount || 0);
   const pfand = Number(order.pfandTotal || 0);
   const tip = Number(order.tipAmount || 0);
+  const failedPayments = (order.payments ?? []).filter((p) => p.tseData?.failed);
 
   return (
     <div className="modal__overlay" onClick={onClose}>
@@ -130,6 +138,37 @@ export function OrderDetailModal({ order, creatorLabel, organizationId, onClose 
             )}
           </div>
 
+          {/* TSE failure detail — the structured errorCode/httpStatus/failureReason
+              behind a "Sign failed" badge, so an admin can act on it instead of
+              just knowing something went wrong. */}
+          {failedPayments.length > 0 && (
+            <div style={{ borderTop: '1px solid color-mix(in oklab, var(--ink) 10%, transparent)', paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--red-ink, #b91c1c)' }}>
+                {t('orders.detail.force.failureDetail')}
+              </div>
+              {failedPayments.map((payment) => (
+                <div
+                  key={payment.id}
+                  style={{ fontSize: 12, padding: '8px 10px', borderRadius: 8, background: 'color-mix(in oklab, var(--red, red) 6%, transparent)', display: 'flex', flexDirection: 'column', gap: 2 }}
+                >
+                  <span>{formatCurrency(payment.amount)} · {t(`orders.paymentMethod.${payment.paymentMethod}`)}</span>
+                  {payment.tseData?.errorCode && (
+                    <span>{t('orders.detail.force.errorCode')}: <span className="mono">{payment.tseData.errorCode}</span></span>
+                  )}
+                  {payment.tseData?.httpStatus !== undefined && (
+                    <span>{t('orders.detail.force.httpStatus')}: <span className="mono">{payment.tseData.httpStatus}</span></span>
+                  )}
+                  {payment.tseData?.failureReason && (
+                    <span>{t('orders.detail.force.failureReason')}: {payment.tseData.failureReason}</span>
+                  )}
+                  {payment.tseData?.failedAt && (
+                    <span>{t('orders.detail.force.failedAt')}: {formatDateTime(payment.tseData.failedAt)}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Receipts — view/email independent of receipt-printing/printer config */}
           {order.payments && order.payments.length > 0 && (
             <div style={{ borderTop: '1px solid color-mix(in oklab, var(--ink) 10%, transparent)', paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -137,9 +176,15 @@ export function OrderDetailModal({ order, creatorLabel, organizationId, onClose 
                 {t('orders.detail.receipts')}
               </div>
               {order.payments.map((payment) => (
-                <PaymentReceiptRow key={payment.id} payment={payment} organizationId={organizationId} />
+                <PaymentReceiptRow key={payment.id} payment={payment} organizationId={organizationId} isAdmin={isAdmin} onForced={onClose} />
               ))}
             </div>
+          )}
+
+          {/* Admin overrides — bypass the normal cancel/status guardrails for manual
+              corrections. Force-cancel requires the TSE reversal to actually succeed. */}
+          {isAdmin && order.status !== 'cancelled' && (
+            <ForceActionsSection organizationId={organizationId} order={order} onForced={onClose} />
           )}
         </div>
 
@@ -149,6 +194,111 @@ export function OrderDetailModal({ order, creatorLabel, organizationId, onClose 
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ForceActionsSection({
+  organizationId,
+  order,
+  onForced,
+}: {
+  organizationId: string;
+  order: Order;
+  onForced: () => void;
+}) {
+  const t = useTranslations();
+  const queryClient = useQueryClient();
+  const [mode, setMode] = useState<'cancel' | 'status' | null>(null);
+  const [reason, setReason] = useState('');
+  const [targetStatus, setTargetStatus] = useState<ForceableOrderStatus>('open');
+
+  const onSuccess = (message: string) => {
+    toast.success(message);
+    queryClient.invalidateQueries({ queryKey: ['orders', organizationId] });
+    onForced();
+  };
+
+  const onError = (error: unknown, failedMessage: string) => {
+    if (error instanceof ApiException && error.code === 'TSE_REVERSAL_REQUIRED') {
+      toast.error(t('orders.detail.force.tseReversalRequired'));
+      return;
+    }
+    toast.error((error as Error).message || failedMessage);
+  };
+
+  const forceCancel = useMutation({
+    mutationFn: () => ordersApi.forceCancel(organizationId, order.id, { reason }),
+    onSuccess: () => onSuccess(t('orders.detail.force.cancelSuccess')),
+    onError: (error) => onError(error, t('orders.detail.force.cancelFailed')),
+  });
+
+  const forceStatus = useMutation({
+    mutationFn: () => ordersApi.forceUpdateStatus(organizationId, order.id, { status: targetStatus, reason }),
+    onSuccess: () => onSuccess(t('orders.detail.force.statusSuccess')),
+    onError: (error) => onError(error, t('orders.detail.force.statusFailed')),
+  });
+
+  const activeMutation = mode === 'cancel' ? forceCancel : forceStatus;
+
+  return (
+    <div style={{ borderTop: '1px solid color-mix(in oklab, var(--ink) 10%, transparent)', paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ fontSize: 12, fontWeight: 600, color: 'color-mix(in oklab, var(--ink) 55%, transparent)' }}>
+        {t('orders.detail.force.sectionTitle')}
+      </div>
+      {!mode && (
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <button type="button" className="btn btn--ghost btn--sm" onClick={() => { setMode('cancel'); setReason(''); }}>
+            {t('orders.detail.force.cancelButton')}
+          </button>
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
+            onClick={() => { setMode('status'); setReason(''); setTargetStatus('open'); }}
+          >
+            {t('orders.detail.force.statusButton')}
+          </button>
+        </div>
+      )}
+      {mode && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ fontSize: 12, color: 'color-mix(in oklab, var(--ink) 55%, transparent)' }}>
+            {mode === 'cancel' ? t('orders.detail.force.cancelReasonHint') : t('orders.detail.force.statusReasonHint')}
+          </div>
+          {mode === 'status' && (
+            <select
+              className="input"
+              value={targetStatus}
+              onChange={(e) => setTargetStatus(e.target.value as ForceableOrderStatus)}
+            >
+              {FORCEABLE_STATUSES.map((s) => (
+                <option key={s} value={s}>{t(`orders.status.${s}`)}</option>
+              ))}
+            </select>
+          )}
+          <textarea
+            className="input"
+            rows={2}
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder={t('orders.detail.force.reasonPlaceholder')}
+          />
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button type="button" className="btn btn--ghost btn--sm" onClick={() => setMode(null)}>
+              {t('common.cancel')}
+            </button>
+            <button
+              type="button"
+              className="btn btn--ghost btn--sm"
+              style={{ color: 'var(--red, var(--danger))' }}
+              disabled={reason.trim().length < 3 || activeMutation.isPending}
+              onClick={() => activeMutation.mutate()}
+            >
+              {activeMutation.isPending ? '…' : t('orders.detail.force.confirm')}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -193,12 +343,41 @@ function ItemRow({ item, refillLabel }: { item: OrderItem; refillLabel: string }
   );
 }
 
-function PaymentReceiptRow({ payment, organizationId }: { payment: Payment; organizationId: string }) {
+function PaymentReceiptRow({
+  payment,
+  organizationId,
+  isAdmin,
+  onForced,
+}: {
+  payment: Payment;
+  organizationId: string;
+  isAdmin: boolean;
+  onForced: () => void;
+}) {
   const t = useTranslations();
+  const queryClient = useQueryClient();
   // Which document the open email-input row (if any) is composing for --
   // one shared input instead of two separate toggle states.
   const [emailMode, setEmailMode] = useState<'receipt' | 'bewirtungsbeleg' | null>(null);
   const [email, setEmail] = useState('');
+  const [forceRefundOpen, setForceRefundOpen] = useState(false);
+  const [forceRefundReason, setForceRefundReason] = useState('');
+
+  const forceRefund = useMutation({
+    mutationFn: () => paymentsApi.forceRefund(organizationId, payment.id, { reason: forceRefundReason }),
+    onSuccess: () => {
+      toast.success(t('orders.detail.force.refundSuccess'));
+      queryClient.invalidateQueries({ queryKey: ['orders', organizationId] });
+      onForced();
+    },
+    onError: (error) => {
+      if (error instanceof ApiException && error.code === 'TSE_REVERSAL_REQUIRED') {
+        toast.error(t('orders.detail.force.tseReversalRequired'));
+        return;
+      }
+      toast.error((error as Error).message || t('orders.detail.force.refundFailed'));
+    },
+  });
 
   const openBlob = async (fetchBlob: () => Promise<Blob>, failedMessage: string) => {
     try {
@@ -299,8 +478,46 @@ function PaymentReceiptRow({ payment, organizationId }: { payment: Payment; orga
           >
             {t('orders.detail.emailBewirtungsbeleg')}
           </button>
+          {isAdmin && payment.status === 'captured' && (
+            <button
+              type="button"
+              className="btn btn--ghost btn--sm"
+              style={{ color: 'var(--red, var(--danger))' }}
+              onClick={() => { setForceRefundOpen((o) => !o); setForceRefundReason(''); }}
+            >
+              {t('orders.detail.force.refundButton')}
+            </button>
+          )}
         </div>
       </div>
+      {forceRefundOpen && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ fontSize: 12, color: 'color-mix(in oklab, var(--ink) 55%, transparent)' }}>
+            {t('orders.detail.force.refundReasonHint')}
+          </div>
+          <textarea
+            className="input"
+            rows={2}
+            value={forceRefundReason}
+            onChange={(e) => setForceRefundReason(e.target.value)}
+            placeholder={t('orders.detail.force.reasonPlaceholder')}
+          />
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button type="button" className="btn btn--ghost btn--sm" onClick={() => setForceRefundOpen(false)}>
+              {t('common.cancel')}
+            </button>
+            <button
+              type="button"
+              className="btn btn--ghost btn--sm"
+              style={{ color: 'var(--red, var(--danger))' }}
+              disabled={forceRefundReason.trim().length < 3 || forceRefund.isPending}
+              onClick={() => forceRefund.mutate()}
+            >
+              {forceRefund.isPending ? '…' : t('orders.detail.force.confirm')}
+            </button>
+          </div>
+        </div>
+      )}
       {emailMode && (
         <div style={{ display: 'flex', gap: 6 }}>
           <input

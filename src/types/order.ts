@@ -173,6 +173,24 @@ export interface CancelOrderData {
   reason?: string;
 }
 
+/** Org-admin-only overrides (see api's OrdersController force-* routes). Bypass the
+ *  normal guardrails (completed-order cancel, illegal status jump) for manual
+ *  corrections; force-cancel requires the TSE reversal to actually succeed (rejects
+ *  with TSE_REVERSAL_REQUIRED and logs the failed attempt otherwise, instead of the
+ *  plain cancel's best-effort signing). */
+export interface ForceCancelOrderData {
+  reason: string;
+}
+
+/** CANCELLED is refused as a target by the api — use ForceCancelOrderData instead
+ *  so the required TSE reversal + stock restore actually happen. */
+export type ForceableOrderStatus = Exclude<OrderStatus, 'cancelled'>;
+
+export interface ForceUpdateOrderStatusData {
+  status: ForceableOrderStatus;
+  reason: string;
+}
+
 export interface QueryOrdersParams {
   eventId?: string;
   status?: OrderStatus;

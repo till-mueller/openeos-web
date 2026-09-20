@@ -850,6 +850,13 @@ export const ordersApi = {
 
   cancel: (organizationId: string, orderId: string, data?: import('@/types/order').CancelOrderData) =>
     apiClient.post<ApiResponse<import('@/types/order').Order>>(`/organizations/${organizationId}/orders/${orderId}/cancel`, data || {}),
+
+  // Org-admin overrides — see ForceCancelOrderData/ForceUpdateOrderStatusData doc comments.
+  forceCancel: (organizationId: string, orderId: string, data: import('@/types/order').ForceCancelOrderData) =>
+    apiClient.post<ApiResponse<import('@/types/order').Order>>(`/organizations/${organizationId}/orders/${orderId}/force-cancel`, data),
+
+  forceUpdateStatus: (organizationId: string, orderId: string, data: import('@/types/order').ForceUpdateOrderStatusData) =>
+    apiClient.post<ApiResponse<import('@/types/order').Order>>(`/organizations/${organizationId}/orders/${orderId}/force-status`, data),
 };
 
 // Payments API
@@ -873,6 +880,10 @@ export const paymentsApi = {
 
   refund: (organizationId: string, paymentId: string) =>
     apiClient.post<ApiResponse<import('@/types/payment').Payment>>(`/organizations/${organizationId}/payments/${paymentId}/refund`),
+
+  // Org-admin override — requires the TSE reversal to succeed (see ForceRefundPaymentData doc comment).
+  forceRefund: (organizationId: string, paymentId: string, data: import('@/types/payment').ForceRefundPaymentData) =>
+    apiClient.post<ApiResponse<import('@/types/payment').Payment>>(`/organizations/${organizationId}/payments/${paymentId}/force-refund`, data),
 
   /** Fetches the receipt PDF with the user's JWT attached and resolves to a
    *  Blob ready for an object-URL (same pattern as tseApi.exportData) --
