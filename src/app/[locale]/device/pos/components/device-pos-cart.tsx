@@ -14,6 +14,7 @@ import { CashPaymentModal } from './cash-payment-modal';
 import { DiscountVoucherModal } from './discount-voucher-modal';
 import { PfandReturnModal } from './pfand-return-modal';
 import { SumUpCheckoutModal } from './sumup-checkout-modal';
+import { PostPaymentReceiptSheet } from './post-payment-receipt-sheet';
 import type { PaymentMethod } from '@/types/payment';
 
 interface PosCartProps {
@@ -90,6 +91,7 @@ export function PosCart({
   const [showVoucherModal, setShowVoucherModal] = useState(false);
   const [showPfandReturnModal, setShowPfandReturnModal] = useState(false);
   const [bewirtungsbelegRequested, setBewirtungsbelegRequested] = useState(false);
+  const [receiptPayment, setReceiptPayment] = useState<{ paymentId: string; orderId: string } | null>(null);
   const { settings } = useDeviceStore();
   const hasSumupReader = !!settings?.sumupReaderId;
   // Unset serviceMode means table service — same default as the POS page and the API
@@ -177,17 +179,19 @@ export function PosCart({
       // A fully-discounted cart (payable total 0) has nothing to pay — skip the
       // payment call (the API rejects amount 0 and marks a 0-total order paid).
       // Card tips raise the charged amount above the cart's payable total.
+      let paymentId: string | null = null;
       if (payableTotal + tip > 0) {
-        await deviceApi.createPayment({
+        const paymentResponse = await deviceApi.createPayment({
           orderId: order.id,
           amount: payableTotal + tip,
           paymentMethod,
           ...(bewirtungsbelegRequested ? { bewirtungsbelegRequested: true } : {}),
         });
+        paymentId = paymentResponse.data.id;
       }
-      return order;
+      return { order, paymentId };
     },
-    onSuccess: (order) => {
+    onSuccess: ({ order, paymentId }) => {
       queryClient.invalidateQueries({ queryKey: ['device-orders'] });
       queryClient.invalidateQueries({ queryKey: ['device-open-tabs'] });
       setLastOrderNumber(order.orderNumber || order.dailyNumber?.toString());
@@ -198,6 +202,9 @@ export function PosCart({
       clearCart();
       setBewirtungsbelegRequested(false);
       setTimeout(() => setLastOrderNumber(null), 5000);
+      if (paymentId) {
+        setReceiptPayment({ paymentId, orderId: order.id });
+      }
     },
   });
 
@@ -918,6 +925,12 @@ export function PosCart({
           setShowSumupModal(false);
           handleCheckout('sumup_terminal' as PaymentMethod, tip);
         }}
+      />
+      <PostPaymentReceiptSheet
+        isOpen={!!receiptPayment}
+        onClose={() => setReceiptPayment(null)}
+        paymentId={receiptPayment?.paymentId ?? null}
+        orderId={receiptPayment?.orderId ?? null}
       />
       <DiscountVoucherModal
         isOpen={showVoucherModal}

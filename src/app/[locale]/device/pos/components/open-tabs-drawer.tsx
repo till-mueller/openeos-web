@@ -12,6 +12,7 @@ import { deviceApi } from '@/lib/api-client';
 import { formatCurrency } from '@/utils/format';
 import { CashPaymentModal } from './cash-payment-modal';
 import { SumUpCheckoutModal } from './sumup-checkout-modal';
+import { PostPaymentReceiptSheet } from './post-payment-receipt-sheet';
 import type { Order } from '@/types/order';
 import type { PaymentMethod } from '@/types/payment';
 
@@ -38,6 +39,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [receiptPayment, setReceiptPayment] = useState<{ paymentId: string; orderId: string } | null>(null);
   const { settings } = useDeviceStore();
   const hasSumupReader = !!settings?.sumupReaderId;
 
@@ -133,15 +135,22 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
     setIsProcessing(true);
     setPaymentError(null);
     try {
+      // A multi-table selection can produce several payments -- the receipt
+      // sheet only shows one, so the first (deterministic, not "whichever
+      // resolved last") is what the cashier gets offered.
+      let firstPayment: { paymentId: string; orderId: string } | null = null;
       for (const order of selectedOrders) {
         const remainingAmount = getRemainingAmount(order);
         if (remainingAmount <= 0) continue;
 
-        await deviceApi.createPayment({
+        const response = await deviceApi.createPayment({
           orderId: order.id,
           amount: remainingAmount,
           paymentMethod,
         });
+        if (!firstPayment) {
+          firstPayment = { paymentId: response.data.id, orderId: order.id };
+        }
       }
 
       queryClient.invalidateQueries({ queryKey: ['device-open-tabs'] });
@@ -150,6 +159,9 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
       setSelectedKeys(new Set());
       setShowCashModal(false);
       setShowSumupModal(false);
+      if (firstPayment) {
+        setReceiptPayment(firstPayment);
+      }
     } catch (error) {
       console.error('Payment failed:', error);
       setPaymentError(error instanceof Error && error.message ? error.message : t('paymentFailed'));
@@ -389,6 +401,13 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
           setShowSumupModal(false);
           paySelectedOrders('sumup_terminal' as PaymentMethod);
         }}
+      />
+
+      <PostPaymentReceiptSheet
+        isOpen={!!receiptPayment}
+        onClose={() => setReceiptPayment(null)}
+        paymentId={receiptPayment?.paymentId ?? null}
+        orderId={receiptPayment?.orderId ?? null}
       />
     </>
   );

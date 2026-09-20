@@ -11,6 +11,7 @@ import { deviceApi } from '@/lib/api-client';
 import { formatCurrency } from '@/utils/format';
 import { CashPaymentModal } from './cash-payment-modal';
 import { SumUpCheckoutModal } from './sumup-checkout-modal';
+import { PostPaymentReceiptSheet } from './post-payment-receipt-sheet';
 import { cx } from '@/utils/cx';
 import type { Order, OrderItem } from '@/types/order';
 import type { PaymentMethod } from '@/types/payment';
@@ -40,6 +41,7 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
   const [showSumupModal, setShowSumupModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [groupBy, setGroupBy] = useState<GroupBy>('order');
+  const [receiptPayment, setReceiptPayment] = useState<{ paymentId: string; orderId: string } | null>(null);
   const { settings } = useDeviceStore();
   const hasSumupReader = !!settings?.sumupReaderId;
 
@@ -188,23 +190,31 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
     mutationFn: async (paymentMethod: PaymentMethod) => {
       const orderPayments = getSelectedByOrder();
 
+      let firstPayment: { paymentId: string; orderId: string } | null = null;
       // Create split payment for each order
       for (const op of orderPayments) {
-        await deviceApi.createSplitPayment({
+        const response = await deviceApi.createSplitPayment({
           orderId: op.orderId,
           amount: op.amount,
           paymentMethod,
           items: op.items,
         });
+        if (!firstPayment) {
+          firstPayment = { paymentId: response.data.id, orderId: op.orderId };
+        }
       }
+      return firstPayment;
     },
-    onSuccess: () => {
+    onSuccess: (firstPayment) => {
       queryClient.invalidateQueries({ queryKey: ['device-open-tabs'] });
       queryClient.invalidateQueries({ queryKey: ['device-orders'] });
       queryClient.invalidateQueries({ queryKey: ['device-order-history'] });
       setSelections({});
       setShowCashModal(false);
       onClose();
+      if (firstPayment) {
+        setReceiptPayment(firstPayment);
+      }
     },
   });
 
@@ -479,6 +489,13 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
           setShowSumupModal(false);
           handlePay('sumup_terminal' as PaymentMethod);
         }}
+      />
+
+      <PostPaymentReceiptSheet
+        isOpen={!!receiptPayment}
+        onClose={() => setReceiptPayment(null)}
+        paymentId={receiptPayment?.paymentId ?? null}
+        orderId={receiptPayment?.orderId ?? null}
       />
     </>
   );

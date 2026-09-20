@@ -1423,6 +1423,14 @@
       "failedAttempts": "{count} failed login attempts"
     }
   },
+  "receiptLink": {
+    "loading": "Loading receipt…",
+    "title": "Your receipt",
+    "subtitle": "View it below or download the PDF.",
+    "download": "Download PDF",
+    "errorTitle": "Link no longer valid",
+    "errorMessage": "This receipt link has expired or doesn't exist. Please ask the cashier for a new one."
+  },
   "invitation": {
     "title": "Invitation",
     "subtitle": "You have been invited to an organization",
@@ -1872,6 +1880,23 @@
       "received": "Received",
       "change": "Change",
       "confirm": "Confirm Payment"
+    },
+    "receiptSheet": {
+      "title": "Payment complete",
+      "display": "Display",
+      "email": "Email",
+      "qr": "QR code",
+      "print": "Print",
+      "emailPlaceholder": "customer@example.com",
+      "send": "Send",
+      "emailSent": "Receipt emailed to {email}",
+      "back": "Back",
+      "qrLoading": "Generating link…",
+      "qrHint": "Scan with your phone to view or download the receipt — link valid for 48 hours.",
+      "displayFailed": "Couldn't load the receipt. Please try again.",
+      "emailFailed": "Couldn't send the email. Please try again.",
+      "printFailed": "Couldn't print the receipt. Please try again.",
+      "qrFailed": "Couldn't generate the QR code. Please try again."
     },
     "sumupCheckout": {
       "title": "Card Payment",

@@ -1464,6 +1464,33 @@ export const deviceApi = {
       { useDeviceAuth: true }
     ),
 
+  // Post-payment receipt delivery — view on this screen, email, or a
+  // signed QR link for the customer's own phone. Printing is reprintOrder above.
+  getReceiptPdf: async (paymentId: string): Promise<Blob> => {
+    const url = `${API_URL}/device-api/payments/${paymentId}/receipt`;
+    const deviceToken = apiClient.getDeviceToken();
+    const res = await fetch(url, {
+      headers: deviceToken ? { 'X-Device-Token': deviceToken } : {},
+    });
+    if (!res.ok) {
+      throw new Error(`Beleg konnte nicht geladen werden (${res.status})`);
+    }
+    return res.blob();
+  },
+
+  emailReceipt: (paymentId: string, email: string) =>
+    apiClient.post<ApiResponse<{ ok: boolean; message?: string }>>(
+      `/device-api/payments/${paymentId}/receipt/email`,
+      { email },
+      { useDeviceAuth: true }
+    ),
+
+  getReceiptLink: (paymentId: string) =>
+    apiClient.get<ApiResponse<{ url: string; expiresAt: string }>>(
+      `/device-api/payments/${paymentId}/receipt-link`,
+      { useDeviceAuth: true }
+    ),
+
   // Station display
   getStationItems: () =>
     apiClient.get<ApiResponse<Array<{ order: any; items: any[] }>>>(

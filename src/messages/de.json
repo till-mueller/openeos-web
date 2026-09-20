@@ -1200,6 +1200,14 @@
       "failedAttempts": "{count} fehlgeschlagene Anmeldeversuche"
     }
   },
+  "receiptLink": {
+    "loading": "Beleg wird geladen…",
+    "title": "Ihr Beleg",
+    "subtitle": "Unten ansehen oder als PDF herunterladen.",
+    "download": "PDF herunterladen",
+    "errorTitle": "Link nicht mehr gültig",
+    "errorMessage": "Dieser Beleg-Link ist abgelaufen oder existiert nicht. Bitte an der Kasse nach einem neuen fragen."
+  },
   "invitation": {
     "title": "Einladung",
     "subtitle": "Sie wurden zu einer Organisation eingeladen",
@@ -1872,6 +1880,23 @@
       "received": "Erhalten",
       "change": "Rückgeld",
       "confirm": "Zahlung bestätigen"
+    },
+    "receiptSheet": {
+      "title": "Zahlung abgeschlossen",
+      "display": "Anzeigen",
+      "email": "E-Mail",
+      "qr": "QR-Code",
+      "print": "Drucken",
+      "emailPlaceholder": "kunde@beispiel.de",
+      "send": "Senden",
+      "emailSent": "Beleg an {email} gesendet",
+      "back": "Zurück",
+      "qrLoading": "Link wird erstellt…",
+      "qrHint": "Mit dem Handy scannen, um den Beleg anzuzeigen oder herunterzuladen — Link 48 Stunden gültig.",
+      "displayFailed": "Beleg konnte nicht geladen werden. Bitte erneut versuchen.",
+      "emailFailed": "E-Mail konnte nicht gesendet werden. Bitte erneut versuchen.",
+      "printFailed": "Beleg konnte nicht gedruckt werden. Bitte erneut versuchen.",
+      "qrFailed": "QR-Code konnte nicht erstellt werden. Bitte erneut versuchen."
     },
     "sumupCheckout": {
       "title": "Kartenzahlung",
