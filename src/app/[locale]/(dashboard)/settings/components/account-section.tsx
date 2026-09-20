@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { useAuthStore } from '@/stores/auth-store';
 import { useRequestEmailChange, useChangePassword } from '@/hooks/use-user-settings';
 import { toast } from '@/components/shared/toast';
+import { DataRightsSection } from './data-rights-section';
 
 const emailChangeSchema = z.object({
   newEmail: z.string().email('Ungültige E-Mail-Adresse'),
@@ -126,6 +127,9 @@ export function AccountSection() {
           </div>
         </form>
       </div>
+
+      {/* Daten & Konto (DSGVO) */}
+      <DataRightsSection />
     </div>
   );
 }

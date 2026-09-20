@@ -154,6 +154,25 @@ export function useRevokeAllOtherSessions() {
   });
 }
 
+// Data rights hooks (DSGVO Art. 15 / Art. 17)
+export function useExportMyData() {
+  return useMutation({
+    mutationFn: async () => {
+      const result = await userSettingsApi.exportMyData();
+      return result;
+    },
+  });
+}
+
+export function useDeleteMyAccount() {
+  return useMutation({
+    mutationFn: async (password?: string) => {
+      const response = await userSettingsApi.deleteMyAccount(password);
+      return response.data;
+    },
+  });
+}
+
 // 2FA Hooks
 export function use2FAStatus() {
   return useQuery<TwoFactorStatus>({

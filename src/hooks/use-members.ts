@@ -26,6 +26,17 @@ export function useRemoveMember(organizationId: string) {
   });
 }
 
+export function useAnonymizeMember(organizationId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (userId: string) => organizationsApi.anonymizeMember(organizationId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['organizations', organizationId, 'members'] });
+    },
+  });
+}
+
 export function useUpdateMember(organizationId: string) {
   const queryClient = useQueryClient();
 

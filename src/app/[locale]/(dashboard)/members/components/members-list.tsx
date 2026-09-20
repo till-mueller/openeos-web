@@ -11,6 +11,7 @@ interface MembersListProps {
   organizationId: string;
   onInviteClick: () => void;
   onRemoveClick: (member: UserOrganization) => void;
+  onAnonymizeClick: (member: UserOrganization) => void;
   onEditPermissionsClick: (member: UserOrganization) => void;
 }
 
@@ -22,7 +23,7 @@ const PERMISSION_KEYS: (keyof OrganizationPermissions)[] = [
   'shiftPlans',
 ];
 
-export function MembersList({ organizationId, onInviteClick, onRemoveClick, onEditPermissionsClick }: MembersListProps) {
+export function MembersList({ organizationId, onInviteClick, onRemoveClick, onAnonymizeClick, onEditPermissionsClick }: MembersListProps) {
   const t = useTranslations('members');
   const { user } = useAuthStore();
   const { data: members, isLoading, error } = useMembers(organizationId);
@@ -170,6 +171,14 @@ export function MembersList({ organizationId, onInviteClick, onRemoveClick, onEd
                           title={t('actions.remove')}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn--ghost"
+                          style={{ padding: '6px 10px', minWidth: 0, color: 'var(--red, var(--danger))', fontSize: 12 }}
+                          onClick={() => onAnonymizeClick(member)}
+                        >
+                          {t('actions.anonymize')}
                         </button>
                       </div>
                     )}

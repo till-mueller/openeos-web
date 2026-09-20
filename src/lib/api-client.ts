@@ -366,6 +366,9 @@ export const organizationsApi = {
   updateMember: (orgId: string, userId: string, data: { role?: string; permissions?: import('@/types/auth').OrganizationPermissions }) =>
     apiClient.patch(`/organizations/${orgId}/members/${userId}`, data),
 
+  anonymizeMember: (orgId: string, userId: string) =>
+    apiClient.post<ApiResponse<{ anonymized: boolean }>>(`/organizations/${orgId}/members/${userId}/anonymize`),
+
   // Invitations
   createInvitation: (orgId: string, data: { email: string; role: string; permissions?: import('@/types/auth').OrganizationPermissions }) =>
     apiClient.post(`/organizations/${orgId}/invitations`, data),
@@ -736,6 +739,30 @@ export const userSettingsApi = {
 
   revokeAllOtherSessions: () =>
     apiClient.delete<ApiResponse<void>>('/users/me/sessions'),
+
+  // Data rights (DSGVO Art. 15 / Art. 17)
+  exportMyData: async (): Promise<{ blob: Blob; filename: string }> => {
+    const url = `${API_URL}/users/me/data-export`;
+    const token = apiClient.getAccessToken();
+    const res = await fetch(url, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      throw new Error(`Datenexport fehlgeschlagen (${res.status})`);
+    }
+    // Filename comes from the server's Content-Disposition attachment name —
+    // read it back instead of reconstructing it client-side.
+    const disposition = res.headers.get('content-disposition') || '';
+    const match = disposition.match(/filename="?([^";]+)"?/);
+    const filename = match?.[1] || 'openeos-data-export.json';
+    return { blob: await res.blob(), filename };
+  },
+
+  deleteMyAccount: (password?: string) =>
+    apiClient.delete<ApiResponse<{ deleted: boolean }>>('/users/me', {
+      body: JSON.stringify({ password }),
+    }),
 };
 
 // 2FA API

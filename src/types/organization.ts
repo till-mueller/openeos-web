@@ -40,6 +40,13 @@ export interface OrganizationSettings {
     requirePayment: boolean;
     maxItemsPerOrder: number;
   };
+  /** Rechtstexte für den öffentlichen Online-Shop (Markdown unterstützt). */
+  legal?: {
+    imprint?: string;
+    privacy?: string;
+    terms?: string;
+    cancellation?: string;
+  };
   sumup?: {
     apiKey: string;
     merchantCode: string;
