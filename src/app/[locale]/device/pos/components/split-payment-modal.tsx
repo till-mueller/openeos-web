@@ -294,6 +294,7 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
         onClose={onClose}
         title={t('title')}
         size="lg"
+        isDismissable={false}
       >
         <div className="p-6">
           {isLoading ? (

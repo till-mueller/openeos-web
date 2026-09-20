@@ -13,6 +13,11 @@ interface DialogModalProps {
   children: ReactNode;
   className?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Close on backdrop click / Escape. Defaults to true. Set false when the
+   *  dialog's own content opens further overlays (a payment sheet, etc.) --
+   *  react-aria's own outside-press dismissal can race a same-click overlay
+   *  mount and close this dialog before the new one ever reads live state. */
+  isDismissable?: boolean;
 }
 
 const sizes = {
@@ -30,9 +35,10 @@ export function DialogModal({
   children,
   className,
   size = 'md',
+  isDismissable = true,
 }: DialogModalProps) {
   return (
-    <ModalOverlay isOpen={isOpen} onOpenChange={(open) => !open && onClose()} isDismissable>
+    <ModalOverlay isOpen={isOpen} onOpenChange={(open) => !open && onClose()} isDismissable={isDismissable}>
       <Modal className={cx(sizes[size], className)}>
         <Dialog>
           <div className="w-full rounded-xl bg-primary shadow-xl border border-secondary">

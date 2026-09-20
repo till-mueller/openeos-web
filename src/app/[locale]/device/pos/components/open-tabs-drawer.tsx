@@ -38,6 +38,11 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  // TEMP diagnostic round 6 — verifying isDismissable={false} actually stops
+  // the dialog from closing on the Cash/Card tap (round 5 proved it WAS
+  // closing; setTimeout alone didn't fix it because the close still landed
+  // before the deferred callback ran).
+  const [debugDismissed, setDebugDismissed] = useState<string | null>(null);
   const { settings } = useDeviceStore();
   const hasSumupReader = !!settings?.sumupReaderId;
 
@@ -84,6 +89,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
 
   useEffect(() => {
     if (!isOpen) {
+      setDebugDismissed(`isOpen-went-false-at=${new Date().toISOString()}`);
       setSelectedKeys(new Set());
       setPaymentError(null);
     }
@@ -206,6 +212,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
         onClose={onClose}
         title={t('title')}
         size="lg"
+        isDismissable={false}
       >
         <div className="flex flex-col" style={{ maxHeight: 'calc(100vh - 200px)' }}>
           {isLoading ? (
@@ -389,6 +396,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
         onConfirm={handleCashConfirm}
         isProcessing={isProcessing}
         error={paymentError}
+        debugExtra={debugDismissed}
       />
 
       {/* SumUp Checkout Modal */}
