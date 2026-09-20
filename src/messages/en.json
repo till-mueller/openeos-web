@@ -620,6 +620,18 @@
         "soundEnabledDescription": "Audio notifications for new orders"
       }
     },
+    "legal": {
+      "title": "Legal Texts",
+      "description": "These texts are shown in the public online shop of your events. Markdown is supported. The content is your responsibility — openEOS does not vet it.",
+      "imprint": "Imprint",
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions",
+      "cancellation": "Cancellation Policy",
+      "markdownHint": "Markdown is supported — openEOS does not vet the content.",
+      "missingWarning": "Without an imprint and privacy policy, your online shop is not legally compliant.",
+      "save": "Save",
+      "saved": "Legal texts saved"
+    },
     "organizationSumup": {
       "title": "SumUp",
       "credentials": {

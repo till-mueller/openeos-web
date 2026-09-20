@@ -620,6 +620,18 @@
         "soundEnabledDescription": "Akustische Signale bei neuen Bestellungen"
       }
     },
+    "legal": {
+      "title": "Rechtstexte",
+      "description": "Diese Texte werden im öffentlichen Online-Shop deiner Veranstaltungen angezeigt. Markdown wird unterstützt. Die Inhalte liegen in deiner Verantwortung — openEOS prüft sie nicht.",
+      "imprint": "Impressum",
+      "privacy": "Datenschutzerklärung",
+      "terms": "AGB",
+      "cancellation": "Widerrufsbelehrung",
+      "markdownHint": "Markdown wird unterstützt — openEOS prüft die Inhalte nicht.",
+      "missingWarning": "Ohne Impressum und Datenschutzerklärung ist dein Online-Shop nicht rechtskonform.",
+      "save": "Speichern",
+      "saved": "Rechtstexte gespeichert"
+    },
     "organizationSumup": {
       "title": "SumUp",
       "credentials": {

@@ -10,6 +10,7 @@ import { OrganizationGeneralSection } from './organization-general-section';
 import { OrganizationContactSection } from './organization-contact-section';
 import { OrganizationBillingSection } from './organization-billing-section';
 import { OrganizationPosSection } from './organization-pos-section';
+import { OrganizationLegalSection } from './organization-legal-section';
 import { PlatformNotificationsSection } from './platform-notifications-section';
 import { useAuthStore } from '@/stores/auth-store';
 
@@ -68,6 +69,7 @@ export function SettingsContainer() {
     { id: 'org-contact', label: t('organizationContact.title'), children: <OrganizationContactSection /> },
     { id: 'org-billing', label: t('organizationBilling.title'), children: <OrganizationBillingSection /> },
     { id: 'org-pos', label: t('organizationPos.title'), children: <OrganizationPosSection /> },
+    { id: 'org-legal', label: t('legal.title'), children: <OrganizationLegalSection /> },
   ];
 
   return (
