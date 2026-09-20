@@ -66,6 +66,7 @@ function TableEntryScreen({
   tableInput,
   setTableInput,
   onStart,
+  onOpenTabs,
   broadcastMessages,
   onDismissBroadcast,
 }: {
@@ -75,6 +76,7 @@ function TableEntryScreen({
   tableInput: string;
   setTableInput: (v: string) => void;
   onStart: () => void;
+  onOpenTabs: () => void;
   broadcastMessages: BroadcastMessage[];
   onDismissBroadcast: (id: string) => void;
 }) {
@@ -103,36 +105,40 @@ function TableEntryScreen({
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button type="button" onClick={onOpenTabs} style={topBtnStyle}>
+            <Receipt style={{ width: 14, height: 14, marginRight: 6, verticalAlign: -2 }} />
+            {t('openTabs.title')}
+          </button>
           <PosActiveEventBadge event={activeEvent} />
         </div>
       </div>
 
       {/* Entry card */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '40px 16px' }}>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '24px 16px', overflowY: 'auto' }}>
         <div style={{
           width: '100%', maxWidth: 380,
           background: 'var(--pos-surface)', borderRadius: 'var(--pos-r-lg)',
           border: '1px solid var(--pos-line)', boxShadow: 'var(--pos-sh-2)',
-          padding: 28, textAlign: 'center',
+          padding: 20, textAlign: 'center',
         }}>
           <div style={{
-            width: 56, height: 56, borderRadius: 999,
-            background: 'var(--pos-accent-soft)', margin: '0 auto 16px',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26,
+            width: 48, height: 48, borderRadius: 999,
+            background: 'var(--pos-accent-soft)', margin: '0 auto 12px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22,
           }}>
             🏷️
           </div>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--pos-ink)', marginBottom: 6 }}>
+          <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--pos-ink)', marginBottom: 4 }}>
             {t('tableNumber.title')}
           </h2>
-          <p style={{ fontSize: 13, color: 'var(--pos-ink-3)', marginBottom: 20 }}>
+          <p style={{ fontSize: 13, color: 'var(--pos-ink-3)', marginBottom: 14 }}>
             {t('tableNumber.description')}
           </p>
 
           {/* Display */}
           <div style={{
-            marginBottom: 18,
-            padding: '14px 20px',
+            marginBottom: 12,
+            padding: '10px 20px',
             background: 'var(--pos-surface-2)',
             border: '1px solid var(--pos-line)',
             borderRadius: 'var(--pos-r-sm)',
@@ -503,16 +509,31 @@ export default function DevicePosPage() {
   // ── Table entry screen ──────────────────────────────────────────────────
   if (!tableNumber) {
     return (
-      <TableEntryScreen
-        deviceName={deviceName || 'POS'}
-        organizationName={organizationName || ''}
-        activeEvent={activeEvent}
-        tableInput={tableInput}
-        setTableInput={setTableInput}
-        onStart={handleStartSession}
-        broadcastMessages={broadcastMessages}
-        onDismissBroadcast={handleDismissBroadcast}
-      />
+      <>
+        <TableEntryScreen
+          deviceName={deviceName || 'POS'}
+          organizationName={organizationName || ''}
+          activeEvent={activeEvent}
+          tableInput={tableInput}
+          setTableInput={setTableInput}
+          onStart={handleStartSession}
+          onOpenTabs={() => setIsOpenTabsOpen(true)}
+          broadcastMessages={broadcastMessages}
+          onDismissBroadcast={handleDismissBroadcast}
+        />
+        {/* Paying off an existing tab shouldn't require starting a new
+            table session first -- these need to be reachable from here too. */}
+        <OpenTabsDrawer
+          isOpen={isOpenTabsOpen}
+          onClose={() => setIsOpenTabsOpen(false)}
+          onSplitPayment={() => setIsSplitPaymentOpen(true)}
+          currentUserId={authenticatedUser?.userId}
+        />
+        <SplitPaymentModal
+          isOpen={isSplitPaymentOpen}
+          onClose={() => setIsSplitPaymentOpen(false)}
+        />
+      </>
     );
   }
 

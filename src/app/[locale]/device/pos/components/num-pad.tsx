@@ -31,7 +31,7 @@ export function NumPad({ value, onChange, onSubmit, maxLength = 10, className }:
   };
 
   const keyStyle: React.CSSProperties = {
-    height: 56,
+    height: 50,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
