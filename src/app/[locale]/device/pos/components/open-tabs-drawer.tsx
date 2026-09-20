@@ -332,6 +332,14 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
                     {formatCurrency(hasSelection ? selectedTotal : tableGroups.reduce((s, g) => s + g.remaining, 0))}
                   </span>
                 </div>
+                {/* TEMP diagnostic round 2 — round 1 (isDisabled fix) was real but
+                    didn't resolve it. Read this back verbatim (footer AND popup
+                    lines both), then this block can come back out. */}
+                <div className="text-[10px] font-mono text-tertiary break-all">
+                  debug: showCashModal={String(showCashModal)} isProcessing={String(isProcessing)} hasSelection={String(hasSelection)} keys=[{Array.from(selectedKeys).join(',')}] orders=[
+                  {selectedOrders.map((o) => `${o.orderNumber}:t${o.total}-p${o.paidAmount}`).join(',')}
+                  ] selectedTotal={selectedTotal} tableGroups={tableGroups.length} rawOrders={orders.length}
+                </div>
 
                 <div className={cx('grid gap-3', hasSumupReader ? 'grid-cols-2' : 'grid-cols-1')}>
                   <Button

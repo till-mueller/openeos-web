@@ -217,6 +217,10 @@ export function CashPaymentModal({
             <div style={{ fontSize: 12, color: 'var(--pos-ink-3)', marginTop: 2 }}>
               {t('amountDue')}: <strong style={{ color: 'var(--pos-ink)' }}>{formatCurrency(total)}</strong>
             </div>
+            {/* TEMP diagnostic round 2 — read back verbatim, then remove. */}
+            <div style={{ fontSize: 10, color: 'var(--pos-warn, orange)', marginTop: 2, fontFamily: 'var(--pos-ff-mono)' }}>
+              debug: total prop = {String(total)}
+            </div>
           </div>
           <button
             type="button"
