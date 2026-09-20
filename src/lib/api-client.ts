@@ -1434,6 +1434,13 @@ export const deviceApi = {
       { useDeviceAuth: true }
     ),
 
+  // The PIN-authenticated server's own sales/commission summary ("My earnings")
+  getServerEarnings: (userId: string, params?: import('@/types/report').ReportQuery) =>
+    apiClient.get<ApiResponse<import('@/types/report').ServerReport>>(
+      `/device-api/servers/${userId}/earnings${reportQuery(params)}`,
+      { useDeviceAuth: true }
+    ),
+
   // Order history
   getAllOrders: (params?: { status?: string; eventId?: string; page?: number; limit?: number }) => {
     const searchParams = new URLSearchParams();

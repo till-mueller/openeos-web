@@ -21,6 +21,7 @@ import { OrderHistoryDrawer } from './components/order-history-drawer';
 import { SplitPaymentModal } from './components/split-payment-modal';
 import { BroadcastToast } from './components/broadcast-toast';
 import { PinEntryScreen } from './components/pin-entry-screen';
+import { MyEarningsDrawer } from './components/my-earnings-drawer';
 import type { Event } from '@/types/event';
 import type { Product } from '@/types/product';
 
@@ -213,6 +214,7 @@ export default function DevicePosPage() {
   const [isOpenTabsOpen, setIsOpenTabsOpen] = useState(false);
   const [isOrderHistoryOpen, setIsOrderHistoryOpen] = useState(false);
   const [isSplitPaymentOpen, setIsSplitPaymentOpen] = useState(false);
+  const [isMyEarningsOpen, setIsMyEarningsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [cartClosing, setCartClosing] = useState(false);
   const [cartDragY, setCartDragY] = useState(0);
@@ -688,7 +690,10 @@ export default function DevicePosPage() {
             🕐
           </button>
           {authenticatedUser && (
-            <div
+            <button
+              type="button"
+              onClick={() => setIsMyEarningsOpen(true)}
+              title={`${authenticatedUser.firstName} ${authenticatedUser.lastName} · ${t('myEarnings.title')}`}
               style={{
                 width: 30,
                 height: 30,
@@ -701,11 +706,13 @@ export default function DevicePosPage() {
                 fontWeight: 700,
                 fontSize: 11,
                 flexShrink: 0,
+                border: 'none',
+                cursor: 'pointer',
+                padding: 0,
               }}
-              title={`${authenticatedUser.firstName} ${authenticatedUser.lastName}`}
             >
               {authenticatedUser.firstName[0]}{authenticatedUser.lastName[0]}
-            </div>
+            </button>
           )}
           {serviceMode === 'table' && (
             <button type="button" onClick={handleEndSession} className="pos-mobile-hide" style={topBtnStyle}>
@@ -1022,6 +1029,13 @@ export default function DevicePosPage() {
       )}
 
       {/* ── Drawers / Modals ── */}
+      <MyEarningsDrawer
+        isOpen={isMyEarningsOpen}
+        onClose={() => setIsMyEarningsOpen(false)}
+        userId={authenticatedUser?.userId}
+        firstName={authenticatedUser?.firstName ?? ''}
+        lastName={authenticatedUser?.lastName ?? ''}
+      />
       <OpenTabsDrawer
         isOpen={isOpenTabsOpen}
         onClose={() => setIsOpenTabsOpen(false)}

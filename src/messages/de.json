@@ -1979,6 +1979,17 @@
     "noActiveEvent": "Kein aktives Event",
     "menu": {
       "more": "Mehr"
+    },
+    "myEarnings": {
+      "title": "Meine Abrechnung",
+      "today": "Heute",
+      "loading": "Wird geladen...",
+      "error": "Abrechnung konnte nicht geladen werden.",
+      "totalSold": "Mein Umsatz",
+      "orders": "{count, plural, =0 {Keine Bestellungen} one {# Bestellung} other {# Bestellungen}}",
+      "cash": "Bar",
+      "card": "Karte",
+      "commission": "Provision ({percent}%)"
     }
   },
   "orders": {
