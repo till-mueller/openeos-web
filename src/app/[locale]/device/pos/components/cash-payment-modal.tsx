@@ -12,6 +12,7 @@ interface CashPaymentModalProps {
   total: number;
   onConfirm: () => void;
   isProcessing?: boolean;
+  error?: string | null;
 }
 
 /** POS-styled numpad — uses --pos-* tokens to match the kasse design. */
@@ -87,6 +88,7 @@ export function CashPaymentModal({
   total,
   onConfirm,
   isProcessing = false,
+  error = null,
 }: CashPaymentModalProps) {
   const t = useTranslations('pos.cashPayment');
   const [received, setReceived] = useState('');
@@ -348,6 +350,23 @@ export function CashPaymentModal({
             flexShrink: 0,
           }}
         >
+          {error && (
+            <div
+              role="alert"
+              style={{
+                marginBottom: 10,
+                padding: '10px 12px',
+                borderRadius: 'var(--pos-r-md)',
+                background: 'color-mix(in oklab, var(--pos-error, #dc2626) 12%, transparent)',
+                border: '1px solid var(--pos-error, #dc2626)',
+                color: 'var(--pos-error, #dc2626)',
+                fontSize: 13,
+                fontWeight: 600,
+              }}
+            >
+              {error}
+            </div>
+          )}
           <button
             type="button"
             onClick={() => canConfirm && onConfirm()}

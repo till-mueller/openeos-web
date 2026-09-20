@@ -1794,7 +1794,9 @@
       "selectAll": "Select all",
       "selectHint": "Select table(s) to pay",
       "selectedTables": "{count, plural, =1 {1 table selected} other {# tables selected}}",
-      "selectedTotal": "Selected"
+      "selectedTotal": "Selected",
+      "nothingToPay": "Nothing to charge — this selection is already fully paid. Refreshing…",
+      "paymentFailed": "Payment failed. Please try again."
     },
     "splitPayment": {
       "title": "Split bill",

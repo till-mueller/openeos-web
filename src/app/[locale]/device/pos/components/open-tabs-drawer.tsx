@@ -37,6 +37,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
   const [showSumupModal, setShowSumupModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+  const [paymentError, setPaymentError] = useState<string | null>(null);
   const { settings } = useDeviceStore();
   const hasSumupReader = !!settings?.sumupReaderId;
 
@@ -82,7 +83,10 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
   }, [orders]);
 
   useEffect(() => {
-    if (!isOpen) setSelectedKeys(new Set());
+    if (!isOpen) {
+      setSelectedKeys(new Set());
+      setPaymentError(null);
+    }
   }, [isOpen]);
 
   // Drop selections for tables that just got fully paid / disappeared.
@@ -114,7 +118,20 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
 
   const paySelectedOrders = async (paymentMethod: PaymentMethod) => {
     if (selectedOrders.length === 0) return;
+
+    // Selection can go stale (a 10s refetchInterval, or another device
+    // settling the same tab first) -- catch a payable amount of 0 here with
+    // a clear message instead of silently no-op'ing through the success path
+    // below, which used to close the sheet without ever telling the cashier
+    // nothing was actually charged.
+    if (selectedTotal <= 0) {
+      setPaymentError(t('nothingToPay'));
+      queryClient.invalidateQueries({ queryKey: ['device-open-tabs'] });
+      return;
+    }
+
     setIsProcessing(true);
+    setPaymentError(null);
     try {
       for (const order of selectedOrders) {
         const remainingAmount = getRemainingAmount(order);
@@ -135,12 +152,18 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
       setShowSumupModal(false);
     } catch (error) {
       console.error('Payment failed:', error);
+      setPaymentError(error instanceof Error && error.message ? error.message : t('paymentFailed'));
+      // Selection may now be stale (a payment in the loop could have gone
+      // through before a later one failed) -- refresh so the cashier sees
+      // accurate remaining amounts on retry instead of the pre-failure state.
+      queryClient.invalidateQueries({ queryKey: ['device-open-tabs'] });
     } finally {
       setIsProcessing(false);
     }
   };
 
   const handleCashPayment = () => {
+    setPaymentError(null);
     setShowCashModal(true);
   };
 
@@ -149,6 +172,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
   };
 
   const handleCardPayment = () => {
+    setPaymentError(null);
     if (hasSumupReader) {
       setShowSumupModal(true);
     } else {
@@ -292,6 +316,11 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
 
               {/* Sticky footer — overview of what's about to be paid + payment actions */}
               <div className="border-t border-secondary px-6 py-4 space-y-3">
+                {paymentError && !showCashModal && (
+                  <div className="rounded-lg border border-error-primary bg-error-primary/10 px-3 py-2 text-sm font-medium text-error-primary">
+                    {paymentError}
+                  </div>
+                )}
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-primary">
                     {hasSelection ? t('selectedTotal') : t('totalOpen')}
@@ -343,6 +372,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
         total={selectedTotal}
         onConfirm={handleCashConfirm}
         isProcessing={isProcessing}
+        error={paymentError}
       />
 
       {/* SumUp Checkout Modal */}

@@ -1794,7 +1794,9 @@
       "selectAll": "Alle auswählen",
       "selectHint": "Tisch(e) zum Bezahlen auswählen",
       "selectedTables": "{count, plural, =1 {1 Tisch ausgewählt} other {# Tische ausgewählt}}",
-      "selectedTotal": "Ausgewählt"
+      "selectedTotal": "Ausgewählt",
+      "nothingToPay": "Nichts zu bezahlen — diese Auswahl ist bereits vollständig beglichen. Wird aktualisiert…",
+      "paymentFailed": "Zahlung fehlgeschlagen. Bitte erneut versuchen."
     },
     "splitPayment": {
       "title": "Rechnung splitten",
