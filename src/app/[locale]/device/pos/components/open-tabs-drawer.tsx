@@ -326,6 +326,15 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
                     {formatCurrency(hasSelection ? selectedTotal : tableGroups.reduce((s, g) => s + g.remaining, 0))}
                   </span>
                 </div>
+                {/* TEMP diagnostic for the "selected total shows 0€" investigation —
+                    read this text back verbatim, then this block can come back out. */}
+                {hasSelection && (
+                  <div className="text-[10px] font-mono text-tertiary break-all">
+                    debug: keys=[{Array.from(selectedKeys).join(',')}] orders=[
+                    {selectedOrders.map((o) => `${o.orderNumber}:t${o.total}-p${o.paidAmount}`).join(',')}
+                    ] selectedTotal={selectedTotal}
+                  </div>
+                )}
 
                 <div className={cx('grid gap-3', hasSumupReader ? 'grid-cols-2' : 'grid-cols-1')}>
                   <Button
