@@ -909,6 +909,7 @@ export function PosCart({
         total={payableTotal}
         onConfirm={() => handleCheckout('cash')}
         isProcessing={isProcessing}
+        source="PosCart"
       />
       <SumUpCheckoutModal
         isOpen={showSumupModal}

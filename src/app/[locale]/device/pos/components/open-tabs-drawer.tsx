@@ -389,6 +389,7 @@ export function OpenTabsDrawer({ isOpen, onClose, onSplitPayment, currentUserId 
         onConfirm={handleCashConfirm}
         isProcessing={isProcessing}
         error={paymentError}
+        source="OpenTabsDrawer"
       />
 
       {/* SumUp Checkout Modal */}
