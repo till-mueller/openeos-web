@@ -21,6 +21,7 @@ function useReport<T>(
     | 'channels'
     | 'categories'
     | 'devices'
+    | 'servers'
     | 'inventory'
     | 'stock-movements',
   fetcher: () => Promise<{ data: T }>,
@@ -66,6 +67,10 @@ export function useCategoriesReport(organizationId: string, params?: ReportQuery
 
 export function useDevicesReport(organizationId: string, params?: ReportQuery, enabled = true) {
   return useReport(organizationId, 'devices', () => reportsApi.getDevices(organizationId, params), params, enabled);
+}
+
+export function useServersReport(organizationId: string, params?: ReportQuery, enabled = true) {
+  return useReport(organizationId, 'servers', () => reportsApi.getServers(organizationId, params), params, enabled);
 }
 
 export function useInventoryReport(organizationId: string, params?: ReportQuery, enabled = true) {

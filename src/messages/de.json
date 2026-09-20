@@ -1367,7 +1367,8 @@
       "permissions": "Berechtigungen",
       "allPermissions": "Alle Module",
       "joinedAt": "Beigetreten am",
-      "actions": "Aktionen"
+      "actions": "Aktionen",
+      "commissionPercent": "Provision"
     },
     "roles": {
       "admin": "Administrator",
@@ -1392,7 +1393,10 @@
       "role": "Rolle",
       "roleRequired": "Rolle ist erforderlich",
       "isAdmin": "Administrator",
-      "isAdminHint": "Administratoren haben Zugriff auf alle Module."
+      "isAdminHint": "Administratoren haben Zugriff auf alle Module.",
+      "commissionPercent": "Provision",
+      "commissionPercentHint": "Prozentsatz vom Umsatz, den diese Person als Provision erhält. Hauptkasse/ohne Verkäufe bleibt bei 0.",
+      "commissionInvalid": "Provision muss zwischen 0 und 100 liegen"
     },
     "actions": {
       "editPermissions": "Berechtigungen bearbeiten",
@@ -2842,6 +2846,24 @@
         "hour": "Stunde",
         "orders": "Bestellungen",
         "revenue": "Umsatz"
+      }
+    },
+    "servers": {
+      "title": "Abrechnung je Mitarbeiter",
+      "subtitle": "Umsatz, Bar-/Kartenanteil und Provision pro Person",
+      "empty": "Keine Abrechnungsdaten vorhanden",
+      "mainRegister": "Hauptkasse",
+      "admin": "Admin",
+      "printPayslip": "Drucken",
+      "columns": {
+        "server": "Mitarbeiter",
+        "orders": "Bestellungen",
+        "totalSold": "Umsatz",
+        "cash": "Bar",
+        "card": "Karte",
+        "commissionPercent": "Provision %",
+        "commissionEarned": "Provision",
+        "actions": "Aktionen"
       }
     }
   },

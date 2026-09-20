@@ -32,6 +32,7 @@ export function EditPermissionsModal({ isOpen, organizationId, member, onClose }
   const tCommon = useTranslations('common');
 
   const [isAdmin, setIsAdmin] = useState(member.role === 'admin');
+  const [commissionPercent, setCommissionPercent] = useState(String(member.commissionPercent ?? 0));
   const [permissions, setPermissions] = useState<OrganizationPermissions>({
     products: false,
     events: false,
@@ -56,6 +57,7 @@ export function EditPermissionsModal({ isOpen, organizationId, member, onClose }
 
   useEffect(() => {
     setIsAdmin(member.role === 'admin');
+    setCommissionPercent(String(member.commissionPercent ?? 0));
     setPermissions({
       products: false,
       events: false,
@@ -75,11 +77,17 @@ export function EditPermissionsModal({ isOpen, organizationId, member, onClose }
 
   const handleSave = async () => {
     setError(null);
+    const parsedCommission = Number(commissionPercent.replace(',', '.'));
+    if (Number.isNaN(parsedCommission) || parsedCommission < 0 || parsedCommission > 100) {
+      setError(t('form.commissionInvalid'));
+      return;
+    }
     try {
       await updateMember.mutateAsync({
         userId: member.id,
         role: isAdmin ? 'admin' : 'member',
         permissions: isAdmin ? {} : permissions,
+        commissionPercent: parsedCommission,
       });
       onClose();
     } catch (err) {
@@ -131,6 +139,29 @@ export function EditPermissionsModal({ isOpen, organizationId, member, onClose }
             checked={isAdmin}
             onChange={setIsAdmin}
           />
+
+          {/* Commission */}
+          <div>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 4 }} htmlFor="commission-percent">
+              {t('form.commissionPercent')}
+            </label>
+            <p style={{ fontSize: 12, color: 'var(--ink-faint)', marginBottom: 8 }}>{t('form.commissionPercentHint')}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <input
+                id="commission-percent"
+                type="number"
+                inputMode="decimal"
+                min={0}
+                max={100}
+                step={0.5}
+                value={commissionPercent}
+                onChange={(e) => setCommissionPercent(e.target.value)}
+                className="input"
+                style={{ width: 100 }}
+              />
+              <span style={{ fontSize: 13, color: 'var(--ink-faint)' }}>%</span>
+            </div>
+          </div>
 
           {/* Module permissions */}
           {!isAdmin && (

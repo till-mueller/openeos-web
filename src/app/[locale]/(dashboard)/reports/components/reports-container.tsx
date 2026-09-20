@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 
 import { useAuthStore } from '@/stores/auth-store';
 import { useEvents, useActiveEvent } from '@/hooks/use-events';
+import { useMembers } from '@/hooks/use-members';
 import {
   useSalesReport,
   useProductsReport,
@@ -13,6 +14,7 @@ import {
   useChannelsReport,
   useCategoriesReport,
   useDevicesReport,
+  useServersReport,
 } from '@/hooks/use-reports';
 import { ListEmpty } from '@/components/shared/list-states';
 
@@ -24,6 +26,7 @@ import { ReportsHourlyChart } from './reports-hourly-chart';
 import { ReportsChannelsTable } from './reports-channels-table';
 import { ReportsCategoriesTable } from './reports-categories-table';
 import { ReportsDevicesTable } from './reports-devices-table';
+import { ReportsServersTable } from './reports-servers-table';
 import { PdfExportButton } from './pdf-export-button';
 
 function getTodayRange(): { startDate: string; endDate: string } {
@@ -69,6 +72,13 @@ export function ReportsContainer() {
   const channelsReport = useChannelsReport(organizationId, reportQuery);
   const categoriesReport = useCategoriesReport(organizationId, reportQuery);
   const devicesReport = useDevicesReport(organizationId, reportQuery);
+  const serversReport = useServersReport(organizationId, reportQuery);
+  const { data: members = [] } = useMembers(organizationId);
+
+  const membershipByUserId = useMemo(
+    () => new Map(members.map((m) => [m.userId, m])),
+    [members],
+  );
 
   const selectedEventName = events.find((e) => e.id === filter.eventId)?.name;
 
@@ -120,6 +130,16 @@ export function ReportsContainer() {
       <ReportsCategoriesTable data={categoriesReport.data} isLoading={categoriesReport.isLoading} />
 
       <ReportsDevicesTable data={devicesReport.data} isLoading={devicesReport.isLoading} />
+
+      <ReportsServersTable
+        organizationId={organizationId}
+        organizationName={currentOrganization?.organization?.name}
+        eventName={selectedEventName}
+        filter={filter}
+        data={serversReport.data}
+        isLoading={serversReport.isLoading}
+        membershipByUserId={membershipByUserId}
+      />
 
       <ReportsHourlyChart data={hourlyReport.data} isLoading={hourlyReport.isLoading} />
     </div>

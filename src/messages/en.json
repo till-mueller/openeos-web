@@ -1590,7 +1590,8 @@
       "permissions": "Permissions",
       "allPermissions": "All modules",
       "joinedAt": "Joined at",
-      "actions": "Actions"
+      "actions": "Actions",
+      "commissionPercent": "Commission"
     },
     "roles": {
       "admin": "Administrator",
@@ -1615,7 +1616,10 @@
       "role": "Role",
       "roleRequired": "Role is required",
       "isAdmin": "Administrator",
-      "isAdminHint": "Administrators have access to all modules."
+      "isAdminHint": "Administrators have access to all modules.",
+      "commissionPercent": "Commission",
+      "commissionPercentHint": "Percentage of their sales this person earns as commission. Leave at 0 for the main register or non-selling roles.",
+      "commissionInvalid": "Commission must be between 0 and 100"
     },
     "actions": {
       "editPermissions": "Edit Permissions",
@@ -2842,6 +2846,24 @@
         "hour": "Hour",
         "orders": "Orders",
         "revenue": "Revenue"
+      }
+    },
+    "servers": {
+      "title": "Payout by server",
+      "subtitle": "Revenue, cash/card split, and commission per person",
+      "empty": "No payout data available",
+      "mainRegister": "Main register",
+      "admin": "Admin",
+      "printPayslip": "Print",
+      "columns": {
+        "server": "Server",
+        "orders": "Orders",
+        "totalSold": "Total sold",
+        "cash": "Cash",
+        "card": "Card",
+        "commissionPercent": "Commission %",
+        "commissionEarned": "Commission",
+        "actions": "Actions"
       }
     }
   },

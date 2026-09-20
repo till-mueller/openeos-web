@@ -86,6 +86,7 @@ export function MembersList({ organizationId, onInviteClick, onRemoveClick, onAn
               <th>{t('table.email')}</th>
               <th>{t('table.role')}</th>
               <th>{t('table.permissions')}</th>
+              <th className="text-right">{t('table.commissionPercent')}</th>
               <th>{t('table.joinedAt')}</th>
               <th>{t('table.actions')}</th>
             </tr>
@@ -148,6 +149,7 @@ export function MembersList({ organizationId, onInviteClick, onRemoveClick, onAn
                       </div>
                     )}
                   </td>
+                  <td className="mono text-right" style={{ fontSize: 12 }}>{Number(member.commissionPercent ?? 0).toFixed(1)}%</td>
                   <td className="mono" style={{ fontSize: 12 }}>{formatDate(member.createdAt)}</td>
                   <td>
                     {!isCurrentUser && (

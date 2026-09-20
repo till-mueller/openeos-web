@@ -80,6 +80,19 @@ export interface DeviceReport {
   revenue: number;
 }
 
+export interface ServerReport {
+  /** null = payments taken without a staff PIN login ("Hauptkasse"/main register). */
+  userId: string | null;
+  name: string;
+  role: 'admin' | 'member' | null;
+  commissionPercent: number;
+  ordersCount: number;
+  totalSold: number;
+  cashTotal: number;
+  cardTotal: number;
+  commissionEarned: number;
+}
+
 /**
  * Systemstatus fuer die Statusleiste des Dashboards.
  *

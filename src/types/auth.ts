@@ -22,6 +22,7 @@ export interface UserOrganization {
   role: OrganizationRole;
   permissions: OrganizationPermissions;
   hasPin?: boolean;
+  commissionPercent?: number;
   createdAt: string;
   updatedAt: string;
   user?: User;

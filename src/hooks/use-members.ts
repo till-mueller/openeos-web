@@ -41,8 +41,8 @@ export function useUpdateMember(organizationId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ userId, role, permissions }: { userId: string; role?: string; permissions?: OrganizationPermissions }) =>
-      organizationsApi.updateMember(organizationId, userId, { role, permissions }),
+    mutationFn: ({ userId, role, permissions, commissionPercent }: { userId: string; role?: string; permissions?: OrganizationPermissions; commissionPercent?: number }) =>
+      organizationsApi.updateMember(organizationId, userId, { role, permissions, commissionPercent }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['organizations', organizationId, 'members'] });
     },

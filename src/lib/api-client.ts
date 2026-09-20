@@ -363,7 +363,7 @@ export const organizationsApi = {
   removeMember: (orgId: string, userId: string) =>
     apiClient.delete(`/organizations/${orgId}/members/${userId}`),
 
-  updateMember: (orgId: string, userId: string, data: { role?: string; permissions?: import('@/types/auth').OrganizationPermissions }) =>
+  updateMember: (orgId: string, userId: string, data: { role?: string; permissions?: import('@/types/auth').OrganizationPermissions; commissionPercent?: number }) =>
     apiClient.patch(`/organizations/${orgId}/members/${userId}`, data),
 
   anonymizeMember: (orgId: string, userId: string) =>
@@ -2085,6 +2085,11 @@ export const reportsApi = {
   getDevices: (organizationId: string, params?: import('@/types/report').ReportQuery) =>
     apiClient.get<ApiResponse<import('@/types/report').DeviceReport[]>>(
       `/organizations/${organizationId}/reports/devices${reportQuery(params)}`
+    ),
+
+  getServers: (organizationId: string, params?: import('@/types/report').ReportQuery) =>
+    apiClient.get<ApiResponse<import('@/types/report').ServerReport[]>>(
+      `/organizations/${organizationId}/reports/servers${reportQuery(params)}`
     ),
 
   getActivity: (organizationId: string) =>
