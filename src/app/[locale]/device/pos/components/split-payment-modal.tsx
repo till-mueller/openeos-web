@@ -431,7 +431,7 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
 
               {/* Payment Actions */}
               <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
+                <div className={cx('grid gap-3', hasSumupReader ? 'grid-cols-2' : 'grid-cols-1')}>
                   <Button
                     color="secondary"
                     size="lg"
@@ -441,20 +441,19 @@ export function SplitPaymentModal({ isOpen, onClose }: SplitPaymentModalProps) {
                   >
                     {t('payCash')}
                   </Button>
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      if (hasSumupReader) {
-                        setShowSumupModal(true);
-                      } else {
-                        handlePay('card');
-                      }
-                    }}
-                    disabled={!hasSelection || isProcessing}
-                    iconLeading={CreditCard01}
-                  >
-                    {t('payCard')}
-                  </Button>
+                  {/* Matches PosCart/OpenTabsDrawer: no reader configured means there's
+                      nothing for this button to actually charge, so it's hidden rather
+                      than silently recording an unverified "card" payment. */}
+                  {hasSumupReader && (
+                    <Button
+                      size="lg"
+                      onClick={() => setShowSumupModal(true)}
+                      disabled={!hasSelection || isProcessing}
+                      iconLeading={CreditCard01}
+                    >
+                      {t('payCard')}
+                    </Button>
+                  )}
                 </div>
               </div>
             </>
