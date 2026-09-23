@@ -435,6 +435,9 @@ export default function DevicePosPage() {
     clearCart();
     setTableInput('');
     setAuthenticatedUser(null);
+    // Best-effort: decouple this device from the server so admins stop
+    // seeing them as "on" it. Never blocks the UI on this.
+    deviceApi.logoutServer().catch(() => {});
   };
 
   const cashDrawerPrinterId = deviceSettings?.cashDrawerPrinterId as string | undefined;

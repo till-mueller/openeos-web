@@ -1173,6 +1173,14 @@ export const devicesApi = {
       `/organizations/${organizationId}/devices/${deviceId}`
     ),
 
+  // Admin: force-decouple the PIN-verified server from a device (e.g. it died
+  // mid-shift and the server needs to couple to a replacement till instead)
+  clearActiveUser: (organizationId: string, deviceId: string) =>
+    apiClient.post<ApiResponse<import('@/types/device').Device>>(
+      `/organizations/${organizationId}/devices/${deviceId}/clear-active-user`,
+      {}
+    ),
+
   // Admin: Get device statistics
   getStats: (organizationId: string, deviceId: string) =>
     apiClient.get<ApiResponse<import('@/types/device').DeviceStats>>(
@@ -1431,6 +1439,14 @@ export const deviceApi = {
     apiClient.post<ApiResponse<{ userId: string; firstName: string; lastName: string; role: string }>>(
       '/device-api/verify-pin',
       { pin },
+      { useDeviceAuth: true }
+    ),
+
+  // End of shift: decouple the PIN-verified server from this device
+  logoutServer: () =>
+    apiClient.post<ApiResponse<{ success: boolean }>>(
+      '/device-api/logout-server',
+      {},
       { useDeviceAuth: true }
     ),
 

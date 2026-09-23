@@ -2200,6 +2200,7 @@
       "name": "Name",
       "status": "Status",
       "class": "Type",
+      "activeServer": "Server",
       "lastSeen": "Last Active",
       "actions": "Actions"
     },
@@ -2208,6 +2209,7 @@
       "verify": "Approve",
       "block": "Block",
       "unblock": "Unblock",
+      "clearActiveUser": "Log out (switch device)",
       "delete": "Delete"
     },
     "verifyDialog": {

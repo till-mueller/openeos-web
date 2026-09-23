@@ -39,6 +39,9 @@ export interface Device {
   lastSeenAt?: string;
   verifiedAt?: string;
   verifiedById?: string;
+  activeUserId?: string | null;
+  activeUserSince?: string | null;
+  activeUser?: { id: string; firstName: string; lastName: string } | null;
   settings?: {
     sumupReaderId?: string;
     displayMode?: DisplayMode;

@@ -115,6 +115,13 @@ export function DevicesList() {
     },
   });
 
+  const clearActiveUserMutation = useMutation({
+    mutationFn: (deviceId: string) => devicesApi.clearActiveUser(organizationId!, deviceId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['devices', organizationId] });
+    },
+  });
+
   if (isLoading) return <Spinner />;
 
   if (devices.length === 0) {
@@ -161,6 +168,7 @@ export function DevicesList() {
               <th>{t('devices.table.name')}</th>
               <th>{t('devices.table.status')}</th>
               <th>{t('devices.table.class')}</th>
+              <th>{t('devices.table.activeServer')}</th>
               <th>{t('devices.table.lastSeen')}</th>
               <th className="text-right">{t('devices.table.actions')}</th>
             </tr>
@@ -228,6 +236,15 @@ export function DevicesList() {
                     <span style={{ fontSize: 13, color: 'color-mix(in oklab, var(--ink) 60%, transparent)' }}>
                       {classLabels[device.type] ? t(classLabels[device.type] as string) : '-'}
                     </span>
+                  </td>
+                  <td>
+                    {device.activeUser ? (
+                      <span style={{ fontSize: 13 }}>
+                        {device.activeUser.firstName} {device.activeUser.lastName}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: 13, color: 'color-mix(in oklab, var(--ink) 35%, transparent)' }}>-</span>
+                    )}
                   </td>
                   <td>
                     <span className="mono" style={{ fontSize: 13, color: 'color-mix(in oklab, var(--ink) 45%, transparent)' }}>
@@ -329,6 +346,15 @@ export function DevicesList() {
                   disabled={unblockMutation.isPending}
                 >
                   {t('devices.actions.unblock')}
+                </button>
+              )}
+              {device.activeUser && (
+                <button
+                  style={itemStyle}
+                  onClick={() => { closeMenu(); clearActiveUserMutation.mutate(device.id); }}
+                  disabled={clearActiveUserMutation.isPending}
+                >
+                  {t('devices.actions.clearActiveUser')}
                 </button>
               )}
               <div style={{ height: 1, background: 'color-mix(in oklab, var(--ink) 8%, transparent)', margin: '4px 0' }} />

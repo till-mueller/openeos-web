@@ -2200,6 +2200,7 @@
       "name": "Name",
       "status": "Status",
       "class": "Typ",
+      "activeServer": "Angemeldet",
       "lastSeen": "Zuletzt aktiv",
       "actions": "Aktionen"
     },
@@ -2208,6 +2209,7 @@
       "verify": "Freigeben",
       "block": "Sperren",
       "unblock": "Entsperren",
+      "clearActiveUser": "Abmelden (Gerätewechsel)",
       "delete": "Löschen"
     },
     "verifyDialog": {
